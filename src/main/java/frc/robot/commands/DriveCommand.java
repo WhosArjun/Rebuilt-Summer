@@ -16,11 +16,11 @@ import frc.robot.subsystems.Drivetrain;
 import swervelib.math.SwerveMath;
 
 public class DriveCommand extends Command{
-    private int nAdjust;
     private Drivetrain drivetrain;
     private DoubleSupplier xTranslationSupplier;
     private DoubleSupplier yTranslationSupplier;
     private DoubleSupplier thetaTranslationSupplier;
+   
     //private Supplier<RobotState> stateSupplier;
     private PIDController thetaController;
     //Constructor contains important information such as robotstate, translation and PID values.
@@ -30,7 +30,7 @@ public class DriveCommand extends Command{
                             this.xTranslationSupplier = xTranslationSupplier;
                             this.yTranslationSupplier = yTranslationSupplier;
                             this.thetaTranslationSupplier = thetaTranslationSupplier;
-                            
+                        
                            // this.thetaController = new PIDController(kP, kI, kD);
                            // this.stateSupplier = stateSupplier;
                             //this.thetaController = new PIDController(kP, kI, kD);
@@ -45,6 +45,8 @@ public class DriveCommand extends Command{
 
     @Override
     public void execute(){ 
+        
+        
         double joystickX = xTranslationSupplier.getAsDouble();
         double joystickY = yTranslationSupplier.getAsDouble();
         double joystickTheta = thetaTranslationSupplier.getAsDouble();
@@ -57,8 +59,15 @@ public class DriveCommand extends Command{
             deadzone(yTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
             deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity())
          )); 
+
+         
+        
+          
+ 
+
+
     }
-   
+    
     public static double deadzone(double number, double deadband){ 
         if (Math.abs(number)<deadband){
             return 0;

@@ -25,7 +25,7 @@ public class TrapezoidalEdge extends Command{
                             this.maxAccel = Math.abs(maxAccel); //Pos
                             direction = Math.signum(distance); //+1 if pos, -1 if neg, 0 if zero
                             this.distance = Math.abs(distance); //distance pos
-                            calculateProfile(); //computes all timing values what gpt gave
+                            calculateProfile(); //computes all timing values 
                             addRequirements(drivetrain); //prevents multiple commands from controlling drivetrain simultaneously
      }
     public void calculateProfile(){
