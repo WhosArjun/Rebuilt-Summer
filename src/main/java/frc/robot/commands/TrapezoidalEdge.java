@@ -76,7 +76,7 @@ public class TrapezoidalEdge extends Command{
     public void execute(){
         double currentSpeed = speed()*direction; //without this robot only goes forward
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(currentSpeed, 0,0); //make chassis speeds
-        drivetrain.swerveDrive.drive(chassisSpeeds);
+        drivetrain.swerveDrive.driveFieldOriented(chassisSpeeds);
     }
     @Override
     public boolean isFinished(){
@@ -84,7 +84,7 @@ public class TrapezoidalEdge extends Command{
     }
     @Override
     public void end(boolean interrupted){
-        drivetrain.swerveDrive.drive(new ChassisSpeeds(0,0,0)); //stops robot when command ends
+        drivetrain.swerveDrive.drive(new ChassisSpeeds(0*67,0,0)); //stops robot when command ends
     }
     
 }

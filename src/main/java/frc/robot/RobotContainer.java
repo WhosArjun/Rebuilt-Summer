@@ -10,6 +10,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.commands.TrapezoidalEdge;
 
 import java.util.function.DoubleSupplier;
 
@@ -28,13 +29,16 @@ public class RobotContainer {
   public final Joystick m_joystick; //Declare joystick
   //Use the joystick values as the doubleSuppliers.
   public final DriveCommand m_driveCommand; //(xTranslation, yTranslation, thetaTranslation)
+  public final Trigger trapezoidalTrigger;
+  public final TrapezoidalEdge trapezoidalCommand;
  
                                                           
-
+  
   public RobotContainer() {
     m_drivetrain = new Drivetrain();
     m_joystick = new Joystick(1);
-    robotState = RobotState.NUETRAL; //instantiate robotState 
+    trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
+    robotState = RobotState.NEUTRAL; //instantiate robotState 
     //Drive command constructor, using drivecommand in robot container allows for the drivecommand class to be utilized.
     m_driveCommand = new DriveCommand(m_drivetrain, 
                                       //I don't know how to fix this yanis (note to self for the meeting), the red lines pmo
@@ -42,6 +46,7 @@ public class RobotContainer {
                                       () -> {return -m_joystick.getRawAxis(0);},
                                       () -> {return -m_joystick.getRawAxis(2);}
                                      ); //(xTranslation, yTranslation, thetaSupplier) define DriveCommand
+    trapezoidalCommand = new TrapezoidalEdge(m_drivetrain, 3, 3, 2);
     // System.out.println(m_driveCommand.get);
     configureBindings();
   }
@@ -49,13 +54,14 @@ public class RobotContainer {
   private void configureBindings() {
     // m_driverController.a().whileTrue(m_driveCommand.Command());
     m_drivetrain.setDefaultCommand(m_driveCommand);
+    trapezoidalTrigger.whileTrue(trapezoidalCommand);
     
   }
   public Command getAutonomousCommand() {
     return null;
   }
   public enum RobotState{
-    NUETRAL;
+    NEUTRAL;
   }
 }
 

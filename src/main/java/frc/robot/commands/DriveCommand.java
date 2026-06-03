@@ -60,11 +60,6 @@ public class DriveCommand extends Command{
             deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity())
          )); 
 
-         
-        
-          
- 
-
 
     }
     
