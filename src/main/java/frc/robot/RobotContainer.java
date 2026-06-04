@@ -19,6 +19,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,6 +36,8 @@ public class RobotContainer {
   public final DriveCommand m_driveCommand; //(xTranslation, yTranslation, thetaTranslation)
   public final Trigger trapezoidalTrigger;
   public final TrapezoidalEdge trapezoidalCommand;
+
+  private final SendableChooser<Command> autoChooser;
  
                                                           
   
@@ -50,6 +54,11 @@ public class RobotContainer {
                                       () -> {return -m_joystick.getRawAxis(2);}
                                      ); //(xTranslation, yTranslation, thetaSupplier) define DriveCommand
     trapezoidalCommand = new TrapezoidalEdge(m_drivetrain, 3, 3, 2);
+
+    autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("BMB", new PathPlannerAuto("BMB"));
+    autoChooser.addOption("BRMB", new PathPlannerAuto("BRMB"));
+    SmartDashboard.putData("Autochooser", autoChooser);
     // System.out.println(m_driveCommand.get);
     configureBindings();
   }
@@ -61,7 +70,7 @@ public class RobotContainer {
     
   }
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("Auto1");
+    return autoChooser.getSelected();
   }
   public enum RobotState{
     NEUTRAL;
