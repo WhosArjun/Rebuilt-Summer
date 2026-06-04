@@ -26,10 +26,13 @@ public class Drivetrain extends SubsystemBase{
         e.printStackTrace();
         throw new RuntimeException("67 yanis");
     }
-
+    configureAuto();
         
     }
     
+    private void configureAuto(){
+        
+    }
 
     public String toString(){
         return "Drivetrain";

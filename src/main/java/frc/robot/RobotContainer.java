@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
@@ -13,6 +14,8 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.commands.TrapezoidalEdge;
 
 import java.util.function.DoubleSupplier;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
@@ -58,7 +61,7 @@ public class RobotContainer {
     
   }
   public Command getAutonomousCommand() {
-    return null;
+    return new PathPlannerAuto("Auto1");
   }
   public enum RobotState{
     NEUTRAL;
