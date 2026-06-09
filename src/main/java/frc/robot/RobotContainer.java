@@ -33,7 +33,7 @@ public class RobotContainer {
   public final Drivetrain m_drivetrain; //Declare drivetrain
   public final Joystick m_joystick; //Declare joystick
   //Use the joystick values as the doubleSuppliers.
-  public final DriveCommand m_driveCommand; //(xTranslation, yTranslation, thetaTranslation)
+  public final DriveCommand m_driveCommand; //(drivetrain, xTranslation, yTranslation, thetaTranslation)
   public final Trigger trapezoidalTrigger;
   public final TrapezoidalEdge trapezoidalCommand;
 
@@ -56,8 +56,8 @@ public class RobotContainer {
     trapezoidalCommand = new TrapezoidalEdge(m_drivetrain, 3, 3, 2);
 
     autoChooser = new SendableChooser<>();
-    autoChooser.setDefaultOption("BMB", new PathPlannerAuto("BMB"));
-    autoChooser.addOption("BRMB", new PathPlannerAuto("BRMB"));
+    // autoChooser.setDefaultOption("MB", new PathPlannerAuto("MB"));
+    // autoChooser.addOption("BRMB", new PathPlannerAuto("BRMB"));
     SmartDashboard.putData("Autochooser", autoChooser);
     // System.out.println(m_driveCommand.get);
     configureBindings();
