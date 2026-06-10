@@ -42,7 +42,7 @@ public class Drivetrain extends SubsystemBase{
             config = RobotConfig.fromGUISettings();
         }
         catch(Exception e){
-            throw new RuntimeException("Failed to grab PathPlanner from GUI");
+            throw new RuntimeException("Failed to grab Pathplanner");
         }
 
         AutoBuilder.configure(

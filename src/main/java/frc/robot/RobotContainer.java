@@ -15,9 +15,11 @@ import frc.robot.commands.TrapezoidalEdge;
 
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +44,7 @@ public class RobotContainer {
                                                           
   
   public RobotContainer() {
+    SmartDashboard.putNumber("Joystick Degree", 2.0);
     m_drivetrain = new Drivetrain();
     m_joystick = new Joystick(1);
     trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
@@ -55,10 +58,12 @@ public class RobotContainer {
                                      ); //(xTranslation, yTranslation, thetaSupplier) define DriveCommand
     trapezoidalCommand = new TrapezoidalEdge(m_drivetrain, 3, 3, 2);
 
-    autoChooser = new SendableChooser<>();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
     // autoChooser.setDefaultOption("MB", new PathPlannerAuto("MB"));
     // autoChooser.addOption("BRMB", new PathPlannerAuto("BRMB"));
-    SmartDashboard.putData("Autochooser", autoChooser);
+    //SendableChooser.addOption("Autochooser", MB);
+
     // System.out.println(m_driveCommand.get);
     configureBindings();
   }
@@ -70,8 +75,15 @@ public class RobotContainer {
     
   }
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // String x = autoChooser.getSelected().getName();
+    return new PathPlannerAuto("MB");
   }
+
+  public void resetPose(){
+    m_drivetrain.swerveDrive.resetOdometry(new Pose2d());
+  }
+
+
   public enum RobotState{
     NEUTRAL;
   }
