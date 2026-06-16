@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /**
@@ -19,6 +21,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static final double MAX_SPEED = 6.7;
-   
+  public static AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
   
 }
