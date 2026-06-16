@@ -11,8 +11,8 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Vision.Vision;
 import frc.robot.commands.TrapezoidalEdge;
-
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -34,6 +34,7 @@ public class RobotContainer {
   public RobotState robotState; //robotstate (NUETRAL)
   public final Drivetrain m_drivetrain; //Declare drivetrain
   public final Joystick m_joystick; //Declare joystick
+  public final Vision m_vision;
   //Use the joystick values as the doubleSuppliers.
   public final DriveCommand m_driveCommand; //(drivetrain, xTranslation, yTranslation, thetaTranslation)
   public final Trigger trapezoidalTrigger;
@@ -47,6 +48,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("Joystick Degree", 2.0);
     m_drivetrain = new Drivetrain();
     m_joystick = new Joystick(1);
+    m_vision = new Vision(m_drivetrain);
     trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
     robotState = RobotState.NEUTRAL; //instantiate robotState 
     //Drive command constructor, using drivecommand in robot container allows for the drivecommand class to be utilized.
