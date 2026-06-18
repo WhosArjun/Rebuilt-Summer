@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoLock;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ExampleCommand;
@@ -39,7 +40,8 @@ public class RobotContainer {
   public final DriveCommand m_driveCommand; //(drivetrain, xTranslation, yTranslation, thetaTranslation)
   public final Trigger trapezoidalTrigger;
   public final TrapezoidalEdge trapezoidalCommand;
-
+  public final AutoLock autoLockCommand;
+  public final Trigger autoTrigger;
   private final SendableChooser<Command> autoChooser;
  
                                                           
@@ -50,6 +52,7 @@ public class RobotContainer {
     m_joystick = new Joystick(1);
     m_vision = new Vision(m_drivetrain);
     trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
+    autoTrigger = new Trigger(()-> m_joystick.getRawButton(7));
     robotState = RobotState.NEUTRAL; //instantiate robotState 
     //Drive command constructor, using drivecommand in robot container allows for the drivecommand class to be utilized.
     m_driveCommand = new DriveCommand(m_drivetrain, 
@@ -59,7 +62,7 @@ public class RobotContainer {
                                       () -> {return -m_joystick.getRawAxis(2);}
                                      ); //(xTranslation, yTranslation, thetaSupplier) define DriveCommand
     trapezoidalCommand = new TrapezoidalEdge(m_drivetrain, 3, 3, 2);
-
+    autoLockCommand = new AutoLock(m_drivetrain, m_vision);
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     // autoChooser.setDefaultOption("MB", new PathPlannerAuto("MB"));
@@ -74,6 +77,7 @@ public class RobotContainer {
     // m_driverController.a().whileTrue(m_driveCommand.Command());
     m_drivetrain.setDefaultCommand(m_driveCommand);
     trapezoidalTrigger.whileTrue(trapezoidalCommand);
+    autoTrigger.whileTrue(autoLockCommand);
     
   }
   public Command getAutonomousCommand() {

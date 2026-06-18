@@ -40,10 +40,12 @@ public class Camera {
             double ambiguity = (r.getBestTarget() != null)?r.getBestTarget().getPoseAmbiguity() : 1.0;
             double confidence = tagCount/(1.0+ambiguity);
 
+            int tagId = (r.getBestTarget()!=null) ? r.getBestTarget().getFiducialId() : -1;
+
             Logger.recordOutput("Vision" + name + "Pose", pose.toPose2d());
             Logger.recordOutput("Vision" + name + "Confidence", confidence);
 
-            output.add(new VisionMeasurement(pose, r.getTimestampSeconds(), confidence, name));
+            output.add(new VisionMeasurement(pose, r.getTimestampSeconds(), confidence, name, tagId));
 
         }
 
