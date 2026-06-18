@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Vision;
 
-import org.littletonrobotics.junction.Logger;import java.util.ArrayList;
+import org.littletonrobotics.junction.Logger;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,9 +19,10 @@ public class Vision extends SubsystemBase{
     
     public Vision(Drivetrain drivetrain){
         this.drivetrain = drivetrain;
-        Transform3d camPose = new Transform3d(0.2,0.2,0.3, new Rotation3d(0,Math.toRadians(25),0));
-        shutter = new Camera("Shutter623", camPose);
-        ardu = new Camera("Ardu623", camPose);
+        Transform3d shutterCamPose = new Transform3d(0.2,0.2,0.3, new Rotation3d(0,Math.toRadians(25),0));
+        Transform3d arduCamPose = new Transform3d(0.2,0.2,0.3, new Rotation3d(0,Math.toRadians(25),0));
+        shutter = new Camera("Shutter623", shutterCamPose);
+        ardu = new Camera("Ardu623", arduCamPose);
     }
 
     @Override

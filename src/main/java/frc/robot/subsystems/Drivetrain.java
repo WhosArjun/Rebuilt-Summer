@@ -36,6 +36,7 @@ public class Drivetrain extends SubsystemBase{
         throw new RuntimeException("67 yanis");
     }
     poseEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics, getGyroRotation(), swerveDrive.getModulePositions(), new Pose2d());
+    
     configureAuto();
         
     }
