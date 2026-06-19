@@ -20,4 +20,8 @@ public class VisionMeasurement {
     public int getTagId(){
         return tagId;
     }
+
+    public double getConfidence(){
+        return confidence;
+    }
 }

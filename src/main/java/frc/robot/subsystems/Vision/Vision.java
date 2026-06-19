@@ -9,6 +9,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
@@ -18,6 +20,8 @@ public class Vision extends SubsystemBase{
     private final Camera shutter;
     private final Camera ardu;
     private int currentTagId;
+    private int bestVisibleTag;
+    private double bestConfidence;
     
     public Vision(Drivetrain drivetrain){
         this.drivetrain = drivetrain;
@@ -26,6 +30,8 @@ public class Vision extends SubsystemBase{
         shutter = new Camera("Shutter623", shutterCamPose);
         ardu = new Camera("Ardu623", arduCamPose);
         currentTagId = -1;
+        bestVisibleTag = -1;
+        bestConfidence = 0;
     }
 
     @Override
@@ -43,6 +49,11 @@ public class Vision extends SubsystemBase{
                 continue;
             }
 
+            if(m.getConfidence()>bestConfidence){
+                bestConfidence = m.getConfidence();
+                bestVisibleTag = m.getTagId();
+            }
+
             Logger.recordOutput("Vision" + m.cameraName + "Accepted", true);
 
             double stdDev = MathUtil.clamp(1.0/m.confidence, 0.05, 2.0);
@@ -53,11 +64,40 @@ public class Vision extends SubsystemBase{
         Logger.recordOutput("Vision Position", drivetrain.getPose());
     }
     
-    public Optional<Pose2d> getCurrentTagPose(){
+    /*public Optional<Pose2d> getCurrentTagPose(){
         if(currentTagId == -1){
             return Optional.empty();
         }
         return Constants.kTagLayout.getTagPose(currentTagId).map(p->p.toPose2d());
+    }
+        */
+
+    public Optional<Pose2d> getNearestAllianceTagPose(){
+        int tagID = getNearestAllianceTag();
+        if(tagID == -1){
+            return Optional.empty();
+        }
+        return Constants.kTagLayout.getTagPose(tagID).map(p->p.toPose2d());
+    }
+
+    public int getNearestAllianceTag(){
+        if(bestVisibleTag==-1){
+            return -1;
+        }
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+
+        if(alliance == Alliance.Blue){
+            if(Constants.BLUE_ALLIANCE_TAGS.contains(bestVisibleTag)){
+                return bestVisibleTag;
+            }
+        }
+
+        else{
+            if(Constants.RED_ALLIANCE_TAGS.contains(bestVisibleTag)){
+                return bestVisibleTag;
+            }
+        }
+        return -1;
     }
 
 

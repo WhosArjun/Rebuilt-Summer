@@ -29,7 +29,7 @@ public class AutoLock extends Command{
 
     @Override
     public void initialize(){
-        Optional<Pose2d> tagPose = vision.getCurrentTagPose();
+        Optional<Pose2d> tagPose = vision.getNearestAllianceTagPose();
         if(tagPose.isEmpty()){
             targetPose = null;
             return;
