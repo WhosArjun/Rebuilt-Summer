@@ -28,8 +28,7 @@ public class Shooter extends SubsystemBase{
         indexMotor.setNeutralMode(NeutralModeValue.Brake);
         Slot0Configs shooterPID = new Slot0Configs();
         shooterPID.kP = 0.1;
-        shooterPID.kI = 0.0;
-        shooterPID.kD = 0.0;
+        shooterPID.kI = 0.0;        shooterPID.kD = 0.0;
         shooterPID.kV = 0.12;
         shooterMotor.getConfigurator().apply(shooterPID);
     }
