@@ -27,7 +27,7 @@ import swervelib.parser.SwerveParser;
 
 public class Drivetrain extends SubsystemBase{
     public SwerveDrive swerveDrive;
-    public final SwerveDrivePoseEstimator poseEstimator;
+    public final SwerveDrivePoseEstimator visionEstimator;
     
     public Drivetrain() {
         try{swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Constants.MAX_SPEED,new Pose2d());
@@ -35,8 +35,7 @@ public class Drivetrain extends SubsystemBase{
         e.printStackTrace();
         throw new RuntimeException("67 yanis");
     }
-    poseEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics, getGyroRotation(), swerveDrive.getModulePositions(), new Pose2d());
-    
+    visionEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics, swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions(), swerveDrive.getPose());    
     configureAuto();
         
     }
@@ -76,13 +75,13 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public Pose2d getPose(){
-        return poseEstimator.getEstimatedPosition();
+        return visionEstimator.getEstimatedPosition();
     }
 
     public void resetPose(Pose2d pose){
         swerveDrive.resetOdometry(pose);
 
-        poseEstimator.resetPosition(getGyroRotation(), swerveDrive.getModulePositions(), pose);
+        visionEstimator.resetPosition(getGyroRotation(), swerveDrive.getModulePositions(), pose);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds(){
@@ -98,6 +97,6 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public void updateOdom(){
-        poseEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
+        visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
     }
 }
