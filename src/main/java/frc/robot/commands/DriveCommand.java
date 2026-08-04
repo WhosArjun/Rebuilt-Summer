@@ -21,9 +21,7 @@ public class DriveCommand extends Command{
     private DoubleSupplier yTranslationSupplier;
     private DoubleSupplier thetaTranslationSupplier;
    
-    //private Supplier<RobotState> stateSupplier;
     private PIDController thetaController;
-    //Constructor contains important information such as robotstate, translation and PID values.
     public DriveCommand(Drivetrain drivetrain, DoubleSupplier xTranslationSupplier,
                         DoubleSupplier yTranslationSupplier, DoubleSupplier thetaTranslationSupplier){
                             this.drivetrain = drivetrain;
@@ -31,12 +29,8 @@ public class DriveCommand extends Command{
                             this.yTranslationSupplier = yTranslationSupplier;
                             this.thetaTranslationSupplier = thetaTranslationSupplier;
                         
-                           // this.thetaController = new PIDController(kP, kI, kD);
-                           // this.stateSupplier = stateSupplier;
-                            //this.thetaController = new PIDController(kP, kI, kD);
 
     }
-    //Supplier<RobotState> stateSupplier, double kP, double kI, double kD
 
     @Override
     public void initialize(){
