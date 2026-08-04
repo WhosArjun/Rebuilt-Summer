@@ -23,8 +23,5 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static final double MAX_SPEED = 6.7;
-  public static AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-  public static final Set<Integer> BLUE_ALLIANCE_TAGS = Set.of(17,18,19,20,21,22);
-  public static final Set<Integer> RED_ALLIANCE_TAGS = Set.of(6,7,8,9,10,11);
-  
+  public static AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);  
 }
