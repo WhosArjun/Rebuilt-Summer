@@ -12,10 +12,13 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -24,14 +27,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   
   
-  public RobotState robotState; //robotstate (NUETRAL)
-  public final Drivetrain m_drivetrain; //Declare drivetrain
-  public final Joystick m_joystick; //Declare joystick
-  //Use the joystick values as the doubleSuppliers.
-  public final DriveCommand m_driveCommand; //(drivetrain, xTranslation, yTranslation, thetaTranslation)
- 
-                                                          
-  
+  public RobotState robotState; 
+  public final Drivetrain m_drivetrain; 
+  public final Joystick m_joystick;
+  public final DriveCommand m_driveCommand; 
+               
+  private SendableChooser<Command> autoChooser;
   public RobotContainer() {
     SmartDashboard.putNumber("Joystick Degree", 2.0);
     m_drivetrain = new Drivetrain();
@@ -44,6 +45,14 @@ public class RobotContainer {
                                      ); 
 
     configureBindings();
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
+  public Command getAutonomousCommand(){
+    String x = autoChooser.getSelected().getName();
+    return new PathPlannerAuto(x);
   }
 
   private void configureBindings() {
