@@ -1,3 +1,4 @@
+//Class with edge case for trapezoidal motion
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
