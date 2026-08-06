@@ -5,20 +5,15 @@
 package frc.robot;
 
 
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Trapezoidal;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Vision.Vision;
 
-import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
