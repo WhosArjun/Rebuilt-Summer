@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import frc.robot.commands.AutoLock;
+
 
 public class RobotContainer {
   
@@ -33,6 +35,9 @@ public class RobotContainer {
 
   public final Trigger trapezoidalTrigger;
   public final Trapezoidal trapezoidalCommand;
+
+  public final Trigger autoLockTrigger;
+  public final AutoLock autolockCommand;
                
   private SendableChooser<Command> autoChooser;
   public RobotContainer() {
@@ -41,6 +46,7 @@ public class RobotContainer {
     m_joystick = new Joystick(1);
     robotState = RobotState.NEUTRAL; //instantiate robotState 
     trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
+    autoLockTrigger = new Trigger(()->m_joystick.getRawButton(5));
     m_vision = new Vision(m_drivetrain.visionEstimator::addVisionMeasurement);
     m_driveCommand = new DriveCommand(m_drivetrain, 
                                       () -> {return -m_joystick.getRawAxis(1);},
@@ -49,6 +55,9 @@ public class RobotContainer {
                                      ); 
 
     trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
+    autolockCommand = new AutoLock(m_drivetrain, 
+                            ()->-m_joystick.getRawAxis(1),
+                            ()->-m_joystick.getRawAxis(0));
     configureBindings();
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -64,6 +73,8 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(m_driveCommand);
 
     trapezoidalTrigger.whileTrue(trapezoidalCommand);
+
+    autoLockTrigger.whileTrue(autolockCommand);
   }
   
 
