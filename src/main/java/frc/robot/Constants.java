@@ -26,4 +26,6 @@ public final class Constants {
 
   public static Translation2d redHub = new Translation2d(11.901, 4.021); //red hub
   public static Translation2d blueHub = new Translation2d(4.6116, 4.021); //blue hub
+
+  
 }
