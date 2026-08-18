@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.DriveCommand2;
 import frc.robot.commands.Trapezoidal;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision.Vision;
@@ -31,7 +32,8 @@ public class RobotContainer {
   public final Drivetrain m_drivetrain; 
   public final Joystick m_joystick;
   public final Vision m_vision;
-  public final DriveCommand m_driveCommand; 
+  public final DriveCommand m_driveCommand;
+  public final DriveCommand2 m_driveCommand2; 
 
   public final Trigger trapezoidalTrigger;
   public final Trapezoidal trapezoidalCommand;
@@ -54,6 +56,13 @@ public class RobotContainer {
                                       () -> {return -m_joystick.getRawAxis(2);}
                                      ); 
 
+    m_driveCommand2 = new DriveCommand2( 
+                                      () -> {return -m_joystick.getRawAxis(1);},
+                                      () -> {return -m_joystick.getRawAxis(0);},
+                                      () -> {return -m_joystick.getRawAxis(2);},
+                                      m_drivetrain
+                                     ); 
+
     trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
     autolockCommand = new AutoLock(m_drivetrain, 
                             ()->-m_joystick.getRawAxis(1),
@@ -70,11 +79,13 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_driveCommand);
+    m_drivetrain.setDefaultCommand(m_driveCommand2);
 
     trapezoidalTrigger.whileTrue(trapezoidalCommand);
 
     autoLockTrigger.whileTrue(autolockCommand);
+
+
   }
   
 
