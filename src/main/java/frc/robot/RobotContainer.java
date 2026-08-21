@@ -8,7 +8,10 @@ package frc.robot;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Trapezoidal;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision.Vision;
+import frc.robot.subsystems.Vision.VisionReal;
+import frc.robot.subsystems.Vision.VisionIO;
+import frc.robot.subsystems.Vision.VisionSim;
+
 
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -28,7 +31,7 @@ public class RobotContainer {
   public RobotState robotState; 
   public final Drivetrain m_drivetrain; 
   public final Joystick m_joystick;
-  public final Vision m_vision;
+  public final VisionIO m_vision;
   public final DriveCommand m_driveCommand; 
 
   public final Trigger trapezoidalTrigger;
@@ -41,7 +44,19 @@ public class RobotContainer {
     m_joystick = new Joystick(1);
     robotState = RobotState.NEUTRAL; //instantiate robotState 
     trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
-    m_vision = new Vision(m_drivetrain.visionEstimator::addVisionMeasurement);
+    // if(Robot.currentMode){
+    //   case REAL -> 
+    //   case SIM ->
+    // }
+    if(!Robot.isReal()){
+      m_vision = new VisionSim(m_drivetrain);
+    } 
+    else {
+      m_vision = new VisionReal(m_drivetrain.visionEstimator::addVisionMeasurement);
+    }
+
+    
+    // m_vision = new VisionIO
     m_driveCommand = new DriveCommand(m_drivetrain, 
                                       () -> {return -m_joystick.getRawAxis(1);},
                                       () -> {return -m_joystick.getRawAxis(0);},

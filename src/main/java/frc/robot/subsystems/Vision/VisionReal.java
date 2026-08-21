@@ -10,13 +10,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Vision extends SubsystemBase{
+public class VisionReal extends VisionIO{
     public Camera shutter;
     public Camera ardu;
     public boolean visionOn = true;
     BiConsumer<Pose2d, Double> updateDrivetrain;
 
-    public Vision(BiConsumer<Pose2d, Double> updateDrivetrain){
+    public VisionReal(BiConsumer<Pose2d, Double> updateDrivetrain){
         shutter = new Camera("Shutter623", new Transform3d(0.263456, 0.2980182, 0.512445, new Rotation3d(0, Math.toRadians(-18.3), Math.toRadians(11))));
         ardu = new Camera("Arducam623", new Transform3d(0.263092, -0.300228, 0.5041392, new Rotation3d(0, Math.toRadians(-9.2), Math.toRadians(-10))));
         this.updateDrivetrain = updateDrivetrain;
