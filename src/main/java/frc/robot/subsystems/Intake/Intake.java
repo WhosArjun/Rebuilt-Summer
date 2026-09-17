@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotState;
@@ -19,10 +20,9 @@ public class Intake extends SubsystemBase{
         this.intakeMotor = new TalonFX(intakeWheelId);
         this.feederWheel = new TalonFX(feederWheelID);
         this.robotStateSupplier = robotStateSupplier;
-        this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+        this.intakeMotor.setNeutralMode(NeutralModeValue.Coast);
         this.feederWheel.setNeutralMode(NeutralModeValue.Coast);
         intakeMotor.setPosition(1,1.0);
-        this.intakeMotor.setNeutralMode(NeutralModeValue.Coast);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
         var mm = configs.MotionMagic;
@@ -40,6 +40,8 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic(){
+        SmartDashboard.putNumber("Intake Position",intakeMotor.getPosition().getValueAsDouble());
+
         /* 
         RobotState state = robotStateSupplier.get();
 

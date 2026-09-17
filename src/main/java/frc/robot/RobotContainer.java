@@ -45,12 +45,17 @@ public class RobotContainer {
   public final Trigger alignTrigger;
   public final Trigger indexTrigger;
   public final Trigger shootTrigger;
-
+  public final Trigger autoShootTrigger;
+  public final Trigger feederIn;
+  public final Trigger feederOut;
+  public final Trigger intakeDownManual;
+  public final Trigger intakeUpManual;
 
 
 
   //ButtonBoards
   public final Joystick m_buttonboardA;
+  public final Joystick m_buttonboardB;
 
   public final Trigger trapezoidalTrigger;
   public final Trapezoidal trapezoidalCommand;
@@ -61,17 +66,23 @@ public class RobotContainer {
   private SendableChooser<Command> autoChooser;
   private final Command shootCommand;
   public RobotContainer() {
-    m_buttonboardA = new Joystick(2);
-    SmartDashboard.putNumber("Joystick Degree", 2.0);
+    m_buttonboardA = new Joystick(0);
+    m_buttonboardB = new Joystick(2);
+    SmartDashboard.putNumber("Joystick Degree",   2.0);
     m_shooter = new Shooter(58, 36);
     m_drivetrain = new Drivetrain();
     m_joystick = new Joystick(1);
+    intakeUpManual = new Trigger(() -> m_buttonboardA.getRawButton(11));
+    intakeDownManual = new Trigger(() ->m_buttonboardA.getRawButton(12));
+    autoShootTrigger = new Trigger(() ->m_joystick.getRawButton(4));
     shootTrigger = new Trigger(() -> m_buttonboardA.getRawButton(7));
     alignTrigger = new Trigger(() -> m_joystick.getRawButton(6));
     indexTrigger = new Trigger(() -> m_buttonboardA.getRawButton(5));
     m_intake = new Intake(30, 52, ()-> robotState);
-    intakeUp = new Trigger(() -> m_buttonboardA.getRawButton(15));
-    intakeDown = new Trigger(() -> m_buttonboardA.getRawButton(16));
+    intakeUp = new Trigger(() -> m_buttonboardB.getRawButton(15));
+    intakeDown = new Trigger(() -> m_buttonboardB.getRawButton(16));
+    feederIn = new Trigger(()-> m_buttonboardA.getRawButton(9));
+    feederOut = new Trigger(() -> m_buttonboardA.getRawButton(10));
     robotState = RobotState.NEUTRAL; //instantiate robotState 
     trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
     // if(Robot.currentMode){
@@ -90,7 +101,8 @@ public class RobotContainer {
     m_driveCommand = new DriveCommand(m_drivetrain, 
                                       () -> {return -m_joystick.getRawAxis(1);},
                                       () -> {return -m_joystick.getRawAxis(0);},
-                                      () -> {return -m_joystick.getRawAxis(2);}
+                                      () -> {return -m_joystick.getRawAxis(2);},
+                                      () -> {return m_joystick.getRawButton(4);}
                                      ); 
 
     
@@ -128,7 +140,14 @@ public class RobotContainer {
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(m_driveCommand);
 
+    alignTrigger.whileTrue(Commands.runOnce(() -> robotState = RobotState.SHOOT));
+
+
     trapezoidalTrigger.whileTrue(trapezoidalCommand);
+
+    
+
+    
 
     intakeUp.whileTrue(Commands.run(()-> {
       m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(0));
@@ -145,13 +164,23 @@ public class RobotContainer {
       m_intake.feederWheel.set((Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0)));
     }, m_intake));
 
-    alignTrigger.whileTrue(Commands.runOnce(() -> robotState = RobotState.SHOOT));
+    feederIn.whileTrue(Commands.run(()-> m_intake.feederWheel.set(Constants.MAX_FLYWHEEL_VOLTAGE)));
+    feederIn.onFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
+    
+    feederOut.whileTrue(Commands.run(()-> m_intake.feederWheel.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
+    feederOut.whileFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
+     
+    intakeUpManual.whileTrue(Commands.run(()-> m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(0))));
+    intakeDownManual.whileTrue(Commands.run(()->m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(Constants.INTAKE_DOWN_POSITION))));
+
+
+    autoShootTrigger.whileTrue(shootCommand);
 
     indexTrigger.whileTrue(Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE)));
-    indexTrigger.onFalse(Commands.runOnce(() -> m_shooter.indexMotor.setVoltage(0)));
+    indexTrigger.whileFalse(Commands.runOnce(() -> m_shooter.indexMotor.setVoltage(0)));
 
-    shootTrigger.whileTrue(Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2)), m_shooter));
-    shootTrigger.onFalse(Commands.runOnce(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
+    shootTrigger.whileTrue(Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(57)), m_shooter));
+    shootTrigger.whileFalse(Commands.runOnce(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
 
   }
   

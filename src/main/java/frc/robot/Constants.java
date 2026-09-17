@@ -35,5 +35,10 @@ public final class Constants {
   public static final double MAX_FLYWHEEL_VOLTAGE = 12;
   public static final double MAX_INDEX_VOLTAGE = 6;
 
+    public static Translation2d redPassUp = new Translation2d(14.2733333333, 6.456);
+  public static Translation2d redPassDown = new Translation2d(14.2733333333, 1.614);
+  public static Translation2d bluePassUp = new Translation2d(2.26666666667, 6.456);
+  public static Translation2d bluePassDown = new Translation2d(2.26666666667, 1.614);
+
 
 }
