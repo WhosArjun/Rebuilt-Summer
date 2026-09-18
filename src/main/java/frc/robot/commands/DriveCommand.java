@@ -53,7 +53,7 @@ public class DriveCommand extends Command{
         drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
             deadzone(xTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
             deadzone(yTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
-            autoShoot()
+           autoShoot()
          )); 
 
 
@@ -66,7 +66,7 @@ public class DriveCommand extends Command{
             return thetaOutput;
         }
         else{
-            return deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
+            return -1 * deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
         }
         
     }
