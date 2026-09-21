@@ -58,12 +58,14 @@ public class DriveCommand extends Command{
 
 
     }
+
+    //If the joystick button is on you run the autolock if statement
     public double autoShoot(){
         if(autoShooter.get() == true){
             PIDController thetaController = new PIDController(5, 0, 0);
             double thetaError = drivetrain.swerveDrive.getOdometryHeading().getRadians() - Math.toRadians(180);
             double thetaOutput = thetaController.calculate(thetaError, 0);
-            return thetaOutput;
+            return -thetaOutput;
         }
         else{
             return -1 * deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());

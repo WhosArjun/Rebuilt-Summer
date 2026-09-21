@@ -176,6 +176,7 @@ public class RobotContainer {
 
     autoShootTrigger.whileTrue(shootCommand);
 
+
     indexTrigger.whileTrue(Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE)));
     indexTrigger.whileFalse(Commands.runOnce(() -> m_shooter.indexMotor.setVoltage(0)));
 
