@@ -53,14 +53,14 @@ public class DriveCommand extends Command{
         drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
             deadzone(xTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
             deadzone(yTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
-           autoShoot()
+           getThetaVelocity()
          )); 
 
 
     }
 
     //If the joystick button is on you run the autolock if statement
-    public double autoShoot(){
+    public double getThetaVelocity(){
         if(autoShooter.get() == true){
             PIDController thetaController = new PIDController(5, 0, 0);
             double thetaError = drivetrain.swerveDrive.getOdometryHeading().getRadians() - Math.toRadians(180);
@@ -68,7 +68,7 @@ public class DriveCommand extends Command{
             return -thetaOutput;
         }
         else{
-            return -1 * deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
+            return deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
         }
         
     }

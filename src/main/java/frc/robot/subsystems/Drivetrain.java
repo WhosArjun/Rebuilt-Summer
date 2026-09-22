@@ -97,6 +97,7 @@ public class Drivetrain extends SubsystemBase{
         error = (error+360)%360; 
         // error = (error + 180) % 360;
         if (error > 180) error -= 360;
+
         // error -= 180;
         // System.out.println(error);
         return error;
@@ -172,4 +173,17 @@ public class Drivetrain extends SubsystemBase{
       SmartDashboard.putNumber("regression Output", sum);
       return sum;
     }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Angle error", getHeadingError());
+    }
+    public void zeroGyro(){
+        swerveDrive.zeroGyro();
+    }
+    public void resetEverything(){
+        resetPose(new Pose2d());
+            zeroGyro();
+    }
+
 }
