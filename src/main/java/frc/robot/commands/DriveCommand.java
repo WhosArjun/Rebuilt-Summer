@@ -16,8 +16,8 @@ import frc.robot.subsystems.Drivetrain;
 import swervelib.math.SwerveMath;
 
 public class DriveCommand extends Command{
-    private Supplier<Boolean> autoShooter;
     private Drivetrain drivetrain;
+    private Supplier<Boolean> autoShooter;
     private DoubleSupplier xTranslationSupplier;
     private DoubleSupplier yTranslationSupplier;
     private DoubleSupplier thetaTranslationSupplier;
@@ -33,7 +33,7 @@ public class DriveCommand extends Command{
                             this.yTranslationSupplier = yTranslationSupplier;
                             this.thetaTranslationSupplier = thetaTranslationSupplier;
                             this.autoShooter = autoShooter;
-                            pidController = new PIDController(5, 0, 0);
+                            pidController = new PIDController(0.072,0,0);
 
     }
 
@@ -64,15 +64,17 @@ public class DriveCommand extends Command{
 
     //If the joystick button is on you run the autolock if statement
     public double getThetaVelocity(){
-        SmartDashboard.putBoolean("buttonOn", autoShooter.get());
-        if(autoShooter.get() == true){
+        boolean autoLockOn = autoShooter.get();
+        SmartDashboard.putBoolean("Auto Lock On", autoLockOn);
+        if (autoLockOn){
             double thetaError = drivetrain.getHeadingError();
-            SmartDashboard.putNumber("theta error", thetaError);
-            double thetaOutput = pidController.calculate(thetaError, 0);
-            return -thetaOutput; //test this
+            SmartDashboard.putNumber("Theta Error", thetaError);
+            double thetaVelocity = pidController.calculate(thetaError, 0);
+            SmartDashboard.putNumber("Theta Velocity", thetaVelocity);
+            return -thetaVelocity;
         }
         else{
-            return deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
+            return deadzone(thetaTranslationSupplier.getAsDouble(),0.05)*Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
         }
         
     }

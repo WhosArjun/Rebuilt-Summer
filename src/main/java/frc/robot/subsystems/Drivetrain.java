@@ -127,35 +127,21 @@ public class Drivetrain extends SubsystemBase{
     }
         */
 public double getHeadingError() {
+    Pose2d robot = visionEstimator.getEstimatedPosition();
     Translation2d target = pickTarget();
-    Pose2d currentPose = visionEstimator.getEstimatedPosition();
 
-    // 1. Calculate distances to target
-    double dx = target.getX() - currentPose.getX();
-    double dy = target.getY() - currentPose.getY();
-
-    // 2. Calculate the target angle relative to the field origin (-180 to 180 degrees)
+    //dy and dx are the differences in the x and y coordinates between the robot and the target
+    double dx = target.getX() - robot.getX();
+    double dy = target.getY() - robot.getY();
+    //Find the angle to the target using atan2, which returns the angle in radians between the positive x axis and the point (dx,dy), we then convert it to degrees
     double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
+    double robotAngle = robot.getRotation().getDegrees();
+    //Comparing the error to where we are actually pointing 
+    double error = MathUtil.inputModulus(targetAngle-robotAngle, -180,180);
 
-    // 3. Get current robot rotation (-180 to 180 degrees)
-    double currentAngle = currentPose.getRotation().getDegrees();
-
-    // 4. Calculate raw error
-    double rawError = targetAngle - currentAngle;
-
-    // 5. Wrap the error so the robot always takes the shortest path (-180 to 180)
-    // For example: if rawError is 270 deg, this automatically turns it into -90 deg.
-    double error = MathUtil.inputModulus(rawError, -180, 180);
-
-    // Telemetry updates
-    SmartDashboard.putNumber("currentPose x", currentPose.getX());
-    SmartDashboard.putNumber("currentPose y", currentPose.getY());
-    SmartDashboard.putNumber("dx", dx);
-    SmartDashboard.putNumber("dy", dy);
-    SmartDashboard.putNumber("targetAngle", targetAngle);
-    SmartDashboard.putNumber("currentAngle", currentAngle);
-    SmartDashboard.putNumber("error", error);
-
+    SmartDashboard.putNumber("Autolock target angle", targetAngle);
+    SmartDashboard.putNumber("Autolock robot angle", robotAngle);
+    SmartDashboard.putNumber("Autolock error", error);
     return error;
 }
     public double hubAngle() {
@@ -232,8 +218,12 @@ public double getHeadingError() {
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Angle error", getHeadingError());
+        /*SmartDashboard.putNumber("Angle error", getHeadingError());
         visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
+        m_field.setRobotPose(visionEstimator.getEstimatedPosition());
+        */
+        visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
+        SmartDashboard.putNumber("angle error", getHeadingError());
         m_field.setRobotPose(visionEstimator.getEstimatedPosition());
 
     }
