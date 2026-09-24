@@ -7,6 +7,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,6 +27,7 @@ import swervelib.parser.SwerveParser;
 public class Drivetrain extends SubsystemBase{
     public SwerveDrive swerveDrive;
     public final SwerveDrivePoseEstimator visionEstimator;
+    private final Field2d m_field = new Field2d();
     
     public Drivetrain() {
         try{swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Constants.MAX_SPEED,new Pose2d());
@@ -34,6 +37,7 @@ public class Drivetrain extends SubsystemBase{
     }
     visionEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics, swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions(), swerveDrive.getPose());    
     configureAuto();
+    SmartDashboard.putData("Robot Field Map", m_field);
         
     }
     
@@ -66,35 +70,54 @@ public class Drivetrain extends SubsystemBase{
     public Translation2d pickTarget(){
       Pose2d pose = visionEstimator.getEstimatedPosition();
       if(DriverStation.getAlliance().get()==Alliance.Red){
-        if(pose.getX()>11.99) // red alliance and in alliance zone
+        if(pose.getX()>11.99){ // red alliance and in alliance zone
+        SmartDashboard.putString("target", "redHub");
           return Constants.redHub;
-        else if (pose.getY()>4.03) // red alliance and not in alliance zone
+        }
+        else if (pose.getY()>4.03){ // red alliance and not in alliance zone
+          SmartDashboard.putString("target", "redPassUp");
           return Constants.redPassUp;
-        else 
+        }
+        else {
+          SmartDashboard.putString("target", "redPassDown");
           return Constants.redPassDown;
+        }
       }
       else {
-        if(pose.getX()<4.55) // blue alliance and in alliance zone
+        if(pose.getX()<4.55){// blue alliance and in alliance zone
+          SmartDashboard.putString("target", "blueHub");
           return Constants.blueHub; 
-        else if (pose.getY()>4.03) // blue alliance and not in alliance zone
+        }
+        else if (pose.getY()>4.03) {// blue alliance and not in alliance zone
+          SmartDashboard.putString("target", "bluePassUp");
           return Constants.bluePassUp;
-        else
+        }
+        else {
+          SmartDashboard.putString("target", "bluePassDown");
           return Constants.bluePassDown;
+        }
       }
     }
 
 
-     public double getHeadingError() {
+    /*  public double getHeadingError() {
         Translation2d target = pickTarget();
+        
         Pose2d currentPose = visionEstimator.getEstimatedPosition();
+        SmartDashboard.putNumber("currentPose x", currentPose.getX());
+        SmartDashboard.putNumber("currentPose y", currentPose.getY());
 
         double dx = target.getX() - currentPose.getX();
+        SmartDashboard.putNumber("dx", dx);
         double dy = target.getY() - currentPose.getY();
+        SmartDashboard.putNumber("dy", dy);
 
         double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
+        SmartDashboard.putNumber("targetAngle", targetAngle);
 
         double error = targetAngle - currentPose.getRotation().getDegrees();;
         error = (error+360)%360; 
+        SmartDashboard.putNumber("error", error);
         // error = (error + 180) % 360;
         if (error > 180) error -= 360;
 
@@ -102,6 +125,39 @@ public class Drivetrain extends SubsystemBase{
         // System.out.println(error);
         return error;
     }
+        */
+public double getHeadingError() {
+    Translation2d target = pickTarget();
+    Pose2d currentPose = visionEstimator.getEstimatedPosition();
+
+    // 1. Calculate distances to target
+    double dx = target.getX() - currentPose.getX();
+    double dy = target.getY() - currentPose.getY();
+
+    // 2. Calculate the target angle relative to the field origin (-180 to 180 degrees)
+    double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
+
+    // 3. Get current robot rotation (-180 to 180 degrees)
+    double currentAngle = currentPose.getRotation().getDegrees();
+
+    // 4. Calculate raw error
+    double rawError = targetAngle - currentAngle;
+
+    // 5. Wrap the error so the robot always takes the shortest path (-180 to 180)
+    // For example: if rawError is 270 deg, this automatically turns it into -90 deg.
+    double error = MathUtil.inputModulus(rawError, -180, 180);
+
+    // Telemetry updates
+    SmartDashboard.putNumber("currentPose x", currentPose.getX());
+    SmartDashboard.putNumber("currentPose y", currentPose.getY());
+    SmartDashboard.putNumber("dx", dx);
+    SmartDashboard.putNumber("dy", dy);
+    SmartDashboard.putNumber("targetAngle", targetAngle);
+    SmartDashboard.putNumber("currentAngle", currentAngle);
+    SmartDashboard.putNumber("error", error);
+
+    return error;
+}
     public double hubAngle() {
       Pose2d currentPose = visionEstimator.getEstimatedPosition();
       double x = currentPose.getX();
@@ -177,13 +233,17 @@ public class Drivetrain extends SubsystemBase{
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Angle error", getHeadingError());
+        visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
+        m_field.setRobotPose(visionEstimator.getEstimatedPosition());
+
     }
+
     public void zeroGyro(){
         swerveDrive.zeroGyro();
     }
     public void resetEverything(){
         resetPose(new Pose2d());
-            zeroGyro();
+            resetEverything();
     }
 
 }

@@ -18,10 +18,10 @@ public class VisionReal extends VisionIO{
 
     public VisionReal(BiConsumer<Pose2d, Double> updateDrivetrain){
         shutter = new Camera("Shutter623", new Transform3d(0.263456, 0.2980182, 0.512445, new Rotation3d(0, Math.toRadians(-18.3), Math.toRadians(11))));
-        ardu = new Camera("Arducam623", new Transform3d(0.263092, -0.300228, 0.5041392, new Rotation3d(0, Math.toRadians(-9.2), Math.toRadians(-10))));
+       // ardu = new Camera("Arducam623", new Transform3d(0.263092, -0.300228, 0.5041392, new Rotation3d(0, Math.toRadians(-9.2), Math.toRadians(-10))));
         this.updateDrivetrain = updateDrivetrain;
     }
-
+    @Override
     public void periodic(){
         SmartDashboard.putBoolean("vision", visionOn);
 
@@ -33,11 +33,13 @@ public class VisionReal extends VisionIO{
              SmartDashboard.putNumber("Shutter pose", reading.getPose2d().getX());
              SmartDashboard.putNumber("Shutter pose y", reading.getPose2d().getY());
          }
-         for(VisionReading reading : ardu.estimatePose()){
+        
+        /*  for(VisionReading reading : ardu.estimatePose()){
              readings.add(reading);
              SmartDashboard.putNumber("Arducam pose", reading.getPose2d().getX());
              SmartDashboard.putNumber("Arducam pose y", reading.getPose2d().getY());
          }
+             */
          for(VisionReading reading : readings){
              updateDrivetrain.accept(reading.getPose2d(), reading.getTimeStampSeconds());
          }
