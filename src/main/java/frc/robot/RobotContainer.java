@@ -46,19 +46,21 @@ public class RobotContainer {
   public final Trigger indexTrigger;
   public final Trigger shootTrigger;
   public final Trigger autoShootTrigger;
+  public final Trigger flywheelOut;
+  public final Trigger flywheelIn;
   public final Trigger feederIn;
   public final Trigger feederOut;
   public final Trigger intakeDownManual;
   public final Trigger intakeUpManual;
 
-
+  
 
   //ButtonBoards
   public final Joystick m_buttonboardA;
   public final Joystick m_buttonboardB;
 
-  public final Trigger trapezoidalTrigger;
-  public final Trapezoidal trapezoidalCommand;
+  //public final Trigger trapezoidalTrigger;
+ // public final Trapezoidal trapezoidalCommand;
   public final Trigger intakeUp;
   public final Trigger intakeDown;
   public final Trigger navxResetButton;
@@ -76,6 +78,9 @@ public class RobotContainer {
     m_joystick = new Joystick(1);
     navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
 
+        flywheelIn = new Trigger(()-> m_buttonboardA.getRawButton(6));
+
+    flywheelOut = new Trigger(()-> m_buttonboardA.getRawButton(6));
     intakeUpManual = new Trigger(() -> m_buttonboardB.getRawButton(11));
     intakeDownManual = new Trigger(() ->m_buttonboardB.getRawButton(12));
     autoShootTrigger = new Trigger(() ->m_buttonboardA.getRawButton(8));
@@ -88,7 +93,7 @@ public class RobotContainer {
     feederIn = new Trigger(()-> m_buttonboardB.getRawButton(9));
     feederOut = new Trigger(() -> m_buttonboardB.getRawButton(10));
     robotState = RobotState.NEUTRAL; //instantiate robotState 
-    trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
+   // trapezoidalTrigger = new Trigger(() -> m_joystick.getRawButton(6));
     // if(Robot.currentMode){
     //   case REAL -> 
     //   case SIM ->
@@ -124,8 +129,17 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Shoot", Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(47.6))).finallyDo(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
     NamedCommands.registerCommand("Shoot", Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(47.6))).finallyDo(()->m_shooter.shooter2Motor.setControl(new VelocityVoltage(0))));
-    NamedCommands.registerCommand("Shoot2", Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))).finallyDo(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
-    NamedCommands.registerCommand("Shoot2", Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2))).finallyDo(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(0))));
+    NamedCommands.registerCommand("Shoot2", 
+    new ParallelCommandGroup (
+                Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))),
+                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2))),
+                new SequentialCommandGroup(
+                    Commands.waitSeconds(1.067),//  TEST TS
+                    Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
+                )
+            ).finallyDo((x)->{m_shooter.shooterMotor.set(0); 
+              m_shooter.shooter2Motor.set(0); 
+              m_shooter.indexMotor.set(0);}));
 
 
      NamedCommands.registerCommand("Index", Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE)).finallyDo(() -> m_shooter.indexMotor.setVoltage(0)));
@@ -135,7 +149,7 @@ public class RobotContainer {
       m_intake.feederWheel.set(Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0));
     }));
 
-    trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
+    //trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
     configureBindings();
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -153,7 +167,7 @@ public class RobotContainer {
     alignTrigger.whileTrue(Commands.runOnce(() -> robotState = RobotState.SHOOT));
 
 
-    trapezoidalTrigger.whileTrue(trapezoidalCommand);
+    //trapezoidalTrigger.whileTrue(trapezoidalCommand);
 
     
 
@@ -179,6 +193,13 @@ public class RobotContainer {
     
     feederOut.whileTrue(Commands.run(()-> m_intake.feederWheel.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
     feederOut.whileFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
+
+    flywheelIn.whileTrue(Commands.run(()->m_shooter.indexMotor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
+        flywheelIn.onFalse(Commands.runOnce(()->m_shooter.indexMotor.set(0)));
+
+        flywheelOut.whileTrue(Commands.run(()->m_shooter.indexMotor.set(Constants.MAX_FLYWHEEL_VOLTAGE)));
+        flywheelOut.onFalse(Commands.runOnce(()->m_shooter.indexMotor.set(0)));
+
      
     intakeUpManual.whileTrue(Commands.run(()-> m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(0))));
     intakeDownManual.whileTrue(Commands.run(()->m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(Constants.INTAKE_DOWN_POSITION))));
@@ -195,7 +216,7 @@ public class RobotContainer {
     shootTrigger.whileFalse(Commands.runOnce(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
     shootTrigger.whileFalse(Commands.runOnce(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(0))));
 
-    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::resetEverything));
+    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
 
   }

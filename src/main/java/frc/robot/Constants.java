@@ -24,8 +24,8 @@ public final class Constants {
   public static final double MAX_SPEED = 6.7;
   public static AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);  
 
-  public static Translation2d redHub = new Translation2d(11.901, 1.481); //red hub
-  public static Translation2d blueHub = new Translation2d(11.901, 4.021); //blue hub
+  public static Translation2d redHub = new Translation2d(11.901, 4.021);
+  public static Translation2d blueHub = new Translation2d(4.6116,4.021);
 
   //INTAKE CONSTANTS
   public static final double INTAKE_DOWN_POSITION = -6.3;

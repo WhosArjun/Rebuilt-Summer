@@ -34,7 +34,7 @@ public class DriveCommand extends Command{
                             this.thetaTranslationSupplier = thetaTranslationSupplier;
                             this.autoShooter = autoShooter;
                             //pidController = new PIDController(5, 0, 0);
-                            pidController = new PIDController(0.072, 0, 0);
+                            pidController = new PIDController(0.075, 0, 0);
 
     }
 

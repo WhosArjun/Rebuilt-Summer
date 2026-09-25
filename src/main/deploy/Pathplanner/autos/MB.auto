@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "twoMeters"
+            "pathName": "MB"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot2"
           }
         }
       ]

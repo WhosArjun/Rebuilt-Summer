@@ -233,7 +233,7 @@ public double getHeadingError() {
     }
     public void resetEverything(){
         resetPose(new Pose2d());
-            resetEverything();
+            zeroGyro();
     }
 
 }
