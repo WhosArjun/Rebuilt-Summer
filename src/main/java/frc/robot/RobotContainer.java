@@ -42,11 +42,10 @@ public class RobotContainer {
   public final VisionIO m_vision;
   public final DriveCommand m_driveCommand; 
   public final Intake m_intake;
-  public final Trigger alignTrigger;
   public final Trigger indexTrigger;
   public final Trigger shootTrigger;
   public final Trigger autoShootTrigger;
-  public final Trigger flywheelOut;
+  public final Trigger indexIn;
   public final Trigger flywheelIn;
   public final Trigger feederIn;
   public final Trigger feederOut;
@@ -78,14 +77,13 @@ public class RobotContainer {
     m_joystick = new Joystick(1);
     navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
 
-        flywheelIn = new Trigger(()-> m_buttonboardA.getRawButton(6));
+    flywheelIn = new Trigger(()-> m_buttonboardA.getRawButton(6));
 
-    flywheelOut = new Trigger(()-> m_buttonboardA.getRawButton(6));
+    indexIn = new Trigger(()-> m_buttonboardA.getRawButton(4));
     intakeUpManual = new Trigger(() -> m_buttonboardB.getRawButton(11));
     intakeDownManual = new Trigger(() ->m_buttonboardB.getRawButton(12));
     autoShootTrigger = new Trigger(() ->m_buttonboardA.getRawButton(8));
     shootTrigger = new Trigger(() -> m_buttonboardA.getRawButton(7));
-    alignTrigger = new Trigger(() -> m_joystick.getRawButton(6));
     indexTrigger = new Trigger(() -> m_buttonboardA.getRawButton(5));
     m_intake = new Intake(30, 52, ()-> robotState);
     intakeUp = new Trigger(() -> m_buttonboardB.getRawButton(15));
@@ -126,9 +124,6 @@ public class RobotContainer {
               m_shooter.shooter2Motor.set(0); 
               m_shooter.indexMotor.set(0);});
     shootCommand.addRequirements(m_shooter);
-
-    NamedCommands.registerCommand("Shoot", Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(47.6))).finallyDo(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
-    NamedCommands.registerCommand("Shoot", Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(47.6))).finallyDo(()->m_shooter.shooter2Motor.setControl(new VelocityVoltage(0))));
     NamedCommands.registerCommand("Shoot2", 
     new ParallelCommandGroup (
                 Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))),
@@ -153,18 +148,17 @@ public class RobotContainer {
     configureBindings();
 
     autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("BOTO Chooser", autoChooser);
   }
 
   public Command getAutonomousCommand(){
     //String x = autoChooser.getSelected().getName();
-    return new PathPlannerAuto("MB");
+    return new PathPlannerAuto("opus");
   }
 
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(m_driveCommand);
 
-    alignTrigger.whileTrue(Commands.runOnce(() -> robotState = RobotState.SHOOT));
 
 
     //trapezoidalTrigger.whileTrue(trapezoidalCommand);
@@ -194,11 +188,11 @@ public class RobotContainer {
     feederOut.whileTrue(Commands.run(()-> m_intake.feederWheel.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
     feederOut.whileFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
 
-    flywheelIn.whileTrue(Commands.run(()->m_shooter.indexMotor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
-        flywheelIn.onFalse(Commands.runOnce(()->m_shooter.indexMotor.set(0)));
+    flywheelIn.whileTrue(Commands.run(()->{m_shooter.shooterMotor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE); m_shooter.shooter2Motor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE);}));
+        flywheelIn.onFalse(Commands.runOnce(()->{m_shooter.shooterMotor.set(0); m_shooter.shooter2Motor.set(0);}));
 
-        flywheelOut.whileTrue(Commands.run(()->m_shooter.indexMotor.set(Constants.MAX_FLYWHEEL_VOLTAGE)));
-        flywheelOut.onFalse(Commands.runOnce(()->m_shooter.indexMotor.set(0)));
+        indexIn.whileTrue(Commands.run(()->m_shooter.indexMotor.set(-1 * Constants.MAX_INDEX_VOLTAGE)));
+        indexIn.onFalse(Commands.runOnce(()->m_shooter.indexMotor.set(0)));
 
      
     intakeUpManual.whileTrue(Commands.run(()-> m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(0))));
@@ -209,12 +203,22 @@ public class RobotContainer {
 
 
     indexTrigger.whileTrue(Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE)));
-    indexTrigger.whileFalse(Commands.runOnce(() -> m_shooter.indexMotor.setVoltage(0)));
+    indexTrigger.onFalse(Commands.runOnce(() -> m_shooter.indexMotor.setVoltage(0)));
 
-    shootTrigger.whileTrue(Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(70)), m_shooter));
-    shootTrigger.whileTrue(Commands.run(()->m_shooter.shooter2Motor.setControl(new VelocityVoltage(70)), m_shooter));
-    shootTrigger.whileFalse(Commands.runOnce(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(0))));
-    shootTrigger.whileFalse(Commands.runOnce(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(0))));
+
+    //Manual shooting (MOMO)
+    shootTrigger.whileTrue( new ParallelCommandGroup (
+                Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))),
+                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2))),
+                new SequentialCommandGroup(
+                    Commands.waitSeconds(1.067),//  TEST TS
+                    Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
+                )
+            ).finallyDo((x)->{m_shooter.shooterMotor.set(0); 
+              m_shooter.shooter2Motor.set(0); 
+              m_shooter.indexMotor.set(0);}));
+              
+   // shootTrigger.onFalse(Commands.runOnce(() -> {m_shooter.shooterMotor.setControl(new VelocityVoltage(0)); m_shooter.shooter2Motor.setControl(new VelocityVoltage(0));}));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 

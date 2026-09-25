@@ -225,6 +225,10 @@ public double getHeadingError() {
         visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
         SmartDashboard.putNumber("angle error", getHeadingError());
         m_field.setRobotPose(visionEstimator.getEstimatedPosition());
+        SmartDashboard.putNumber("frontleft", swerveDrive.getModuleMap().get("frontleft").getAbsolutePosition());
+                SmartDashboard.putNumber("frontright", swerveDrive.getModuleMap().get("frontright").getAbsolutePosition());
+                        SmartDashboard.putNumber("backleft", swerveDrive.getModuleMap().get("backleft").getAbsolutePosition());
+                                SmartDashboard.putNumber("backright", swerveDrive.getModuleMap().get("backright").getAbsolutePosition());
 
     }
 

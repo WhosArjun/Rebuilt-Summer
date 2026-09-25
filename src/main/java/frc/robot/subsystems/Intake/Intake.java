@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase{
         this.intakeMotor = new TalonFX(intakeWheelId);
         this.feederWheel = new TalonFX(feederWheelID);
         this.robotStateSupplier = robotStateSupplier;
-        this.intakeMotor.setNeutralMode(NeutralModeValue.Coast);
+        this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
         this.feederWheel.setNeutralMode(NeutralModeValue.Coast);
         intakeMotor.setPosition(1,1.0);
 
