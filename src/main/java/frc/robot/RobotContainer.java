@@ -72,7 +72,7 @@ public class RobotContainer {
     m_buttonboardA = new Joystick(0);
     m_buttonboardB = new Joystick(2);
     SmartDashboard.putNumber("Joystick Degree",   2.0);
-    m_shooter = new Shooter(58, 36, 53);
+    m_shooter = new Shooter(58, 36, 35);
     m_drivetrain = new Drivetrain();
     m_joystick = new Joystick(1);
     navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
@@ -115,7 +115,7 @@ public class RobotContainer {
     
     shootCommand = new ParallelCommandGroup (
                 Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(m_drivetrain.distanceToRPM()))),
-                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(m_drivetrain.distanceToRPM()))),
+                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(m_drivetrain.distanceToRPM() * 4))),
                 new SequentialCommandGroup(
                     Commands.waitSeconds(1.067),//  TEST TS
                     Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
@@ -127,7 +127,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot2", 
     new ParallelCommandGroup (
                 Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))),
-                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2))),
+                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2*4))),
                 new SequentialCommandGroup(
                     Commands.waitSeconds(1.067),//  TEST TS
                     Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
@@ -188,7 +188,7 @@ public class RobotContainer {
     feederOut.whileTrue(Commands.run(()-> m_intake.feederWheel.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
     feederOut.whileFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
 
-    flywheelIn.whileTrue(Commands.run(()->{m_shooter.shooterMotor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE); m_shooter.shooter2Motor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE);}));
+    flywheelIn.whileTrue(Commands.run(()->{m_shooter.shooterMotor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE); m_shooter.shooter2Motor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE*4);}));
         flywheelIn.onFalse(Commands.runOnce(()->{m_shooter.shooterMotor.set(0); m_shooter.shooter2Motor.set(0);}));
 
         indexIn.whileTrue(Commands.run(()->m_shooter.indexMotor.set(-1 * Constants.MAX_INDEX_VOLTAGE)));
@@ -209,7 +209,7 @@ public class RobotContainer {
     //Manual shooting (MOMO)
     shootTrigger.whileTrue( new ParallelCommandGroup (
                 Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))),
-                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2))),
+                Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2*4))),
                 new SequentialCommandGroup(
                     Commands.waitSeconds(1.067),//  TEST TS
                     Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
