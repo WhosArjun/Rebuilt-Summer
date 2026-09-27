@@ -1,0 +1,9 @@
+Build List:
+  * Reinforce Intake Plates
+      1/4" aluminium
+      Mild weight reduction
+      Replace churro extension with double bent plate
+  * Redo Camera Mount
+      Better print
+      Add second attachment point to churro
+      Attatch ring to net holes (3rd attatchment point?)
