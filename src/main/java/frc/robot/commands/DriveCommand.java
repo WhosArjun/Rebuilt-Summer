@@ -16,19 +16,25 @@ import frc.robot.subsystems.Drivetrain;
 import swervelib.math.SwerveMath;
 
 public class DriveCommand extends Command{
+    private Supplier<Boolean> autoShooter;
     private Drivetrain drivetrain;
     private DoubleSupplier xTranslationSupplier;
     private DoubleSupplier yTranslationSupplier;
     private DoubleSupplier thetaTranslationSupplier;
+    private PIDController pidController;
+
    
     private PIDController thetaController;
     public DriveCommand(Drivetrain drivetrain, DoubleSupplier xTranslationSupplier,
-                        DoubleSupplier yTranslationSupplier, DoubleSupplier thetaTranslationSupplier){
+                        DoubleSupplier yTranslationSupplier, DoubleSupplier thetaTranslationSupplier,
+                        Supplier<Boolean> autoShooter){
                             this.drivetrain = drivetrain;
                             this.xTranslationSupplier = xTranslationSupplier;
                             this.yTranslationSupplier = yTranslationSupplier;
                             this.thetaTranslationSupplier = thetaTranslationSupplier;
-                        
+                            this.autoShooter = autoShooter;
+                            //pidController = new PIDController(5, 0, 0);
+                            pidController = new PIDController(0.075, 0, 0);
 
     }
 
@@ -51,10 +57,25 @@ public class DriveCommand extends Command{
         drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
             deadzone(xTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
             deadzone(yTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisVelocity()),
-            deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity())
+           getThetaVelocity()
          )); 
 
 
+    }
+
+    //If the joystick button is on you run the autolock if statement
+    public double getThetaVelocity(){
+        SmartDashboard.putBoolean("buttonOn", autoShooter.get());
+        if(autoShooter.get() == true){
+            double thetaError = drivetrain.getHeadingError();
+            SmartDashboard.putNumber("theta error", thetaError);
+            double thetaOutput = pidController.calculate(thetaError, 0);
+            return -thetaOutput; //test this
+        }
+        else{
+            return deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
+        }
+        
     }
     
     public static double deadzone(double number, double deadband){ 

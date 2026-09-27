@@ -47,6 +47,7 @@ public class Camera {
     public String toString(){
         return "{Name: " + name + ", isActive: " + isConnected() + "}";
     }
+
 }
 
 class VisionReading{
