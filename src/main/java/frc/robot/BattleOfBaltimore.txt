@@ -1,9 +1,30 @@
 Build List:
   * Reinforce Intake Plates
-      1/4" aluminium
+      1/4" aluminum
       Mild weight reduction
       Replace churro extension with double bent plate
   * Redo Camera Mount
-      Better print
+      Better print (ABS)
       Add second attachment point to churro
       Attatch ring to net holes (3rd attatchment point?)
+  * Check and repair all tank brackets + bent plate
+  * Immobilize shooter hood
+      Drill holes and extend small lower rod
+  * Fix wiring issues (ask William)  
+  * Fix Intake Stalling
+      Test spacers, washers, longer spline, gearbox (more torque?), metal vs plastic pully
+  * Research adjustable tensioner
+      Screw to lock like a collar
+      Fits on a bearing or screw?
+      3D printed (be careful of friction weld)
+  * Redo Net
+      Looser net
+      More attachment points
+      Don't allowed balls tp slip through
+      Double layer for more strength
+
+Programming : 
+Simulation Code (For next season and stuff)
+Feedforward control
+Reprogram Autolock (With the intertia physics, for shoot on move autolock)
+    Possibly fusing Odometry fused Photon Vision (Similar thing for FTC that I programmed)
