@@ -117,7 +117,7 @@ public class RobotContainer {
                 Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(m_drivetrain.distanceToRPM()))),
                 Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(m_drivetrain.distanceToRPM() * 4))),
                 new SequentialCommandGroup(
-                    Commands.waitSeconds(1.067),//  TEST TS
+                    Commands.waitSeconds(1.067),
                     Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
                 )
             ).finallyDo((x)->{m_shooter.shooterMotor.set(0); 
@@ -129,7 +129,7 @@ public class RobotContainer {
                 Commands.run(() -> m_shooter.shooterMotor.setControl(new VelocityVoltage(48.2))),
                 Commands.run(() -> m_shooter.shooter2Motor.setControl(new VelocityVoltage(48.2*4))),
                 new SequentialCommandGroup(
-                    Commands.waitSeconds(1.067),//  TEST TS
+                    Commands.waitSeconds(1.067),
                     Commands.run(() -> m_shooter.indexMotor.setVoltage(Constants.MAX_INDEX_VOLTAGE))
                 )
             ).finallyDo((x)->{m_shooter.shooterMotor.set(0); 
@@ -218,7 +218,7 @@ public class RobotContainer {
               m_shooter.shooter2Motor.set(0); 
               m_shooter.indexMotor.set(0);}));
               
-   // shootTrigger.onFalse(Commands.runOnce(() -> {m_shooter.shooterMotor.setControl(new VelocityVoltage(0)); m_shooter.shooter2Motor.setControl(new VelocityVoltage(0));}));
+   shootTrigger.onFalse(Commands.runOnce(() -> {m_shooter.shooterMotor.setControl(new VelocityVoltage(0)); m_shooter.shooter2Motor.setControl(new VelocityVoltage(0));}));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
