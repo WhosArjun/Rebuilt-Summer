@@ -218,9 +218,9 @@ public class RobotContainer {
               m_shooter.shooter2Motor.set(0); 
               m_shooter.indexMotor.set(0);}));
               
-   shootTrigger.onFalse(Commands.runOnce(() -> {m_shooter.shooterMotor.setControl(new VelocityVoltage(0)); m_shooter.shooter2Motor.setControl(new VelocityVoltage(0));}));
+   //shootTrigger.onFalse(Commands.runOnce(() -> {m_shooter.shooterMotor.setControl(new VelocityVoltage(0)); m_shooter.shooter2Motor.setControl(new VelocityVoltage(0));}));
 
-    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
+  navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
 
   }
