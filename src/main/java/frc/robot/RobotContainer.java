@@ -65,7 +65,7 @@ public class RobotContainer {
   public final Trigger navxResetButton;
   
                
-  private SendableChooser<Command> autoChooser;
+  //private SendableChooser<Command> autoChooser;
   private final Command shootCommand;
   public RobotContainer() {
 
@@ -147,8 +147,8 @@ public class RobotContainer {
     //trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
     configureBindings();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("BOTO Chooser", autoChooser);
+    //autoChooser = AutoBuilder.buildAutoChooser();
+    //SmartDashboard.putData("BOTO Chooser", autoChooser);
   }
 
   public Command getAutonomousCommand(){
