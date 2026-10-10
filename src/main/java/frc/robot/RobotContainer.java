@@ -22,7 +22,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -153,7 +155,10 @@ public class RobotContainer {
 
   public Command getAutonomousCommand(){
     //String x = autoChooser.getSelected().getName();
+    SmartDashboard.putString("auto working", "yes");
     return new PathPlannerAuto("opus");
+
+    
   }
 
   private void configureBindings() {
@@ -229,6 +234,11 @@ public class RobotContainer {
   public void resetPose(){
     m_drivetrain.swerveDrive.resetOdometry(new Pose2d());
   }
+
+  public void periodic(){
+    
+  }
+  
 
 
   public enum RobotState{

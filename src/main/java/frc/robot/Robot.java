@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -15,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private boolean wasLastAuto;
 
   private final RobotContainer m_robotContainer;
 
@@ -23,9 +27,11 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
   }
 
   /**
@@ -54,13 +60,34 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.resetPose();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    SmartDashboard.putString("Path", m_autonomousCommand.getName());
+    SmartDashboard.putString("Auto", m_robotContainer.m_drivetrain.swerveDrive.getPose().toString());
+    Command x = new Command() {
+      @Override
+      public void execute() {
+        System.out.println("HELLO");
+      }
+    };
 
+    CommandScheduler.getInstance().schedule(x);
+    SmartDashboard.putBoolean("isScheduledInit", m_autonomousCommand.isScheduled());
+    
+  
+    m_robotContainer.periodic();
     // schedule the autonomous command (example)
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    wasLastAuto = true;
+    autonomousInit();
+        
+    SmartDashboard.putBoolean("isScheduled", m_autonomousCommand.isScheduled());
+    SmartDashboard.putString("Auto", m_robotContainer.m_drivetrain.swerveDrive.getPose().toString());
+  }
 
   @Override
   public void teleopInit() {
@@ -75,7 +102,11 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotContainer.periodic();
+
+    wasLastAuto = false;
+  }
 
   @Override
   public void testInit() {
