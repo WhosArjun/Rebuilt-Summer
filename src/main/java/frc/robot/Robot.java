@@ -60,32 +60,26 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_robotContainer.resetPose();
+    //m_robotContainer.resetPose();
+   // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    SmartDashboard.putString("Path", m_autonomousCommand.getName());
-    SmartDashboard.putString("Auto", m_robotContainer.m_drivetrain.swerveDrive.getPose().toString());
-    Command x = new Command() {
-      @Override
-      public void execute() {
-        System.out.println("HELLO");
-      }
-    };
-
-    CommandScheduler.getInstance().schedule(x);
-    SmartDashboard.putBoolean("isScheduledInit", m_autonomousCommand.isScheduled());
+    if(m_autonomousCommand != null) {
+      SmartDashboard.putString("Path", m_autonomousCommand.getName());
     
-  
-    m_robotContainer.periodic();
+      SmartDashboard.putBoolean("isScheduled", m_autonomousCommand.isScheduled());
+      CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    }
+    else{
+      SmartDashboard.putString("Path", "No Autonomnous Command");
+      SmartDashboard.putBoolean("isScheduled", false);
+    }
     // schedule the autonomous command (example)
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    wasLastAuto = true;
-    autonomousInit();
-        
-    SmartDashboard.putBoolean("isScheduled", m_autonomousCommand.isScheduled());
+    SmartDashboard.putBoolean("isScheduled", m_autonomousCommand != null && m_autonomousCommand.isScheduled());
     SmartDashboard.putString("Auto", m_robotContainer.m_drivetrain.swerveDrive.getPose().toString());
   }
 
@@ -96,7 +90,7 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+      CommandScheduler.getInstance().cancel(m_autonomousCommand);
     }
   }
 

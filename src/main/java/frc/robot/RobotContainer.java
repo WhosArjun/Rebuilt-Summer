@@ -19,6 +19,7 @@ import frc.robot.subsystems.Vision.VisionSim;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -70,6 +72,8 @@ public class RobotContainer {
   //private SendableChooser<Command> autoChooser;
   private final Command shootCommand;
   public RobotContainer() {
+
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 
     m_buttonboardA = new Joystick(0);
     m_buttonboardB = new Joystick(2);
