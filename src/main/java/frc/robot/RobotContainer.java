@@ -73,7 +73,7 @@ public class RobotContainer {
   private final Command shootCommand;
   public RobotContainer() {
 
-    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
+    //CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 
     m_buttonboardA = new Joystick(0);
     m_buttonboardB = new Joystick(2);
@@ -159,6 +159,17 @@ public class RobotContainer {
 
   public Command getAutonomousCommand(){
     //String x = autoChooser.getSelected().getName();
+    /* 
+    try{
+      return new PathPlannerAuto("opus");
+    } catch (Exception e){
+      System.out.print("Caught the pahtlplanner lau");
+    }
+    finally{
+      System.out.print("entered try catch");
+    }
+    return null;
+    */
     SmartDashboard.putString("auto working", "yes");
     return new PathPlannerAuto("opus");
 

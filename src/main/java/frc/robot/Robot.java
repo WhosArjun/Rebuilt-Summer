@@ -60,6 +60,17 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    /* 
+    Command x = new Command() {
+      @Override
+      public void execute(){
+        System.out.println("HELLO");
+      }
+    };
+    */
+    
+    //CommandScheduler.getInstance().schedule(x);
+
     //m_robotContainer.resetPose();
    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -76,9 +87,13 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
   }
 
+  
+
+
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    
     SmartDashboard.putBoolean("isScheduled", m_autonomousCommand != null && m_autonomousCommand.isScheduled());
     SmartDashboard.putString("Auto", m_robotContainer.m_drivetrain.swerveDrive.getPose().toString());
   }
