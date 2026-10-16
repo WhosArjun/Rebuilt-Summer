@@ -13,15 +13,18 @@ import frc.robot.RobotContainer.RobotState;
 
 public class Intake extends SubsystemBase{
     public TalonFX intakeMotor;
-    public TalonFX feederWheel;
+    public TalonFX feederWheelR;
+    public TalonFX feederWheelL;
     public Supplier<RobotState> robotStateSupplier;
 
-    public Intake(int intakeWheelId, int feederWheelID, Supplier<RobotState> robotStateSupplier){
+    public Intake(int intakeWheelId, int feederWheelIDR, int feederWheelIDL, Supplier<RobotState> robotStateSupplier){
         this.intakeMotor = new TalonFX(intakeWheelId);
-        this.feederWheel = new TalonFX(feederWheelID);
+        this.feederWheelR = new TalonFX(feederWheelIDR);
+        this.feederWheelL = new TalonFX(feederWheelIDL);
         this.robotStateSupplier = robotStateSupplier;
         this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
-        this.feederWheel.setNeutralMode(NeutralModeValue.Coast);
+        this.feederWheelR.setNeutralMode(NeutralModeValue.Coast);
+        this.feederWheelL.setNeutralMode(NeutralModeValue.Coast);
         intakeMotor.setPosition(1,1.0);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -40,7 +43,9 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Intake Position",intakeMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake Position Left",intakeMotor.getPosition().getValueAsDouble());
+    
+
 
         /* 
         RobotState state = robotStateSupplier.get();

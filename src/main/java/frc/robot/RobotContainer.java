@@ -91,7 +91,7 @@ public class RobotContainer {
     autoShootTrigger = new Trigger(() ->m_buttonboardA.getRawButton(8));
     shootTrigger = new Trigger(() -> m_buttonboardA.getRawButton(7));
     indexTrigger = new Trigger(() -> m_buttonboardA.getRawButton(5));
-    m_intake = new Intake(30, 52, ()-> robotState);
+    m_intake = new Intake(30, 39, 52, ()-> robotState);
     intakeUp = new Trigger(() -> m_buttonboardB.getRawButton(15));
     intakeDown = new Trigger(() -> m_buttonboardB.getRawButton(16));
     feederIn = new Trigger(()-> m_buttonboardB.getRawButton(9));
@@ -147,7 +147,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Intake", Commands.run(()-> {
       m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(Constants.INTAKE_DOWN_POSITION));
-      m_intake.feederWheel.set(Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0));
+      m_intake.feederWheelL.set(Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0));
+      m_intake.feederWheelR.set(Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0));
     }));
 
     //trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
@@ -191,24 +192,27 @@ public class RobotContainer {
 
     intakeUp.whileTrue(Commands.run(()-> {
       m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(0));
-      m_intake.feederWheel.set(0);
+      m_intake.feederWheelL.set(0);
+      m_intake.feederWheelR.set(0);
     }));
 
     intakeUp.or(intakeDown).whileFalse(Commands.run(()-> {
       m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(m_intake.intakeMotor.getPosition().getValueAsDouble()));
-      m_intake.feederWheel.set(0);
+      m_intake.feederWheelL.set(0);
+      m_intake.feederWheelR.set(0);
     }, m_intake));
 
     intakeDown.whileTrue(Commands.run(()-> {
       m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(Constants.INTAKE_DOWN_POSITION));
-      m_intake.feederWheel.set((Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0)));
+      m_intake.feederWheelL.set((Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0)));
+      m_intake.feederWheelR.set((Math.abs(m_intake.intakeMotor.getPosition().getValueAsDouble()-Constants.INTAKE_DOWN_POSITION<.7?Constants.MAX_FLYWHEEL_VOLTAGE:0)));
     }, m_intake));
 
-    feederIn.whileTrue(Commands.run(()-> m_intake.feederWheel.set(Constants.MAX_FLYWHEEL_VOLTAGE)));
-    feederIn.onFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
+    feederIn.whileTrue(Commands.run(()-> {m_intake.feederWheelL.set(Constants.MAX_FLYWHEEL_VOLTAGE); m_intake.feederWheelR.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE);}));
+    feederIn.onFalse(Commands.runOnce(()-> {m_intake.feederWheelL.set(0); m_intake.feederWheelR.set(0);}));
     
-    feederOut.whileTrue(Commands.run(()-> m_intake.feederWheel.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE)));
-    feederOut.whileFalse(Commands.runOnce(()->m_intake.feederWheel.set(0)));
+    feederOut.whileTrue(Commands.run(()-> {m_intake.feederWheelL.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE); m_intake.feederWheelR.set(Constants.MAX_FLYWHEEL_VOLTAGE);}));
+    feederOut.whileFalse(Commands.runOnce(()->{m_intake.feederWheelL.set(0); m_intake.feederWheelR.set(0);}));
 
     flywheelIn.whileTrue(Commands.run(()->{m_shooter.shooterMotor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE); m_shooter.shooter2Motor.set(-1 * Constants.MAX_FLYWHEEL_VOLTAGE*4);}));
         flywheelIn.onFalse(Commands.runOnce(()->{m_shooter.shooterMotor.set(0); m_shooter.shooter2Motor.set(0);}));
