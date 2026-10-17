@@ -32,7 +32,7 @@ public final class Constants {
 
 
   //OUTTAKE CONSTANTS
-  public static final double MAX_FLYWHEEL_VOLTAGE = 12;
+  public static final double MAX_FLYWHEEL_VOLTAGE = 8;
   public static final double MAX_INDEX_VOLTAGE = 6;
 
     public static Translation2d redPassUp = new Translation2d(14.2733333333, 6.456);

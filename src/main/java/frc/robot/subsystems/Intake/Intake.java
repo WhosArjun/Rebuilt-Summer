@@ -29,8 +29,8 @@ public class Intake extends SubsystemBase{
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
         var mm = configs.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 13;
-        mm.MotionMagicAcceleration = 7;
+        mm.MotionMagicCruiseVelocity = 13; //change
+        mm.MotionMagicAcceleration = 7;    
         mm.MotionMagicJerk = 0;
         var slot0 = configs.Slot0;
         slot0.kP = 3;
