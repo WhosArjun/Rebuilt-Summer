@@ -28,7 +28,8 @@ public final class Constants {
   public static Translation2d blueHub = new Translation2d(4.6116,4.021);
 
   //INTAKE CONSTANTS
-  public static final double INTAKE_DOWN_POSITION = -6.3;
+  public static final double INTAKE_DOWN_POSITION = 0;
+    public static final double INTAKE_UP = 12;
 
 
   //OUTTAKE CONSTANTS

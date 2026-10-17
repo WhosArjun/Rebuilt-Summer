@@ -72,7 +72,7 @@ public class RobotContainer {
   public final Trigger zeroIntake;
   
                
-  private SendableChooser<Command> autoChooser;
+  //private SendableChooser<Command> autoChooser;
   private final Command shootCommand;
   public RobotContainer() {
 
@@ -92,7 +92,6 @@ public class RobotContainer {
     flywheelIn = new Trigger(()-> m_buttonboardA.getRawButton(6));
 
     coastMode = new Trigger(() -> m_buttonboardA.getRawButton(2));
-
     indexIn = new Trigger(()-> m_buttonboardA.getRawButton(4));
     intakeUpManual = new Trigger(() -> m_buttonboardB.getRawButton(11));
     intakeDownManual = new Trigger(() ->m_buttonboardB.getRawButton(12));
@@ -162,12 +161,11 @@ public class RobotContainer {
     //trapezoidalCommand = new Trapezoidal(m_drivetrain,3,3,2);
     configureBindings();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
+    //autoChooser = AutoBuilder.buildAutoChooser();
     //SmartDashboard.putData("BOTO Chooser", autoChooser);
   }
-
   public Command getAutonomousCommand(){
-    String x = autoChooser.getSelected().getName();
+    //String x = autoChooser.getSelected().getName();
     /* 
     try{
       return new PathPlannerAuto("opus");
@@ -180,9 +178,7 @@ public class RobotContainer {
     return null;
     */
     SmartDashboard.putString("auto working", "yes");
-    return new PathPlannerAuto(x);
-    //return new PathPlannerAuto("opus");
-
+    return new PathPlannerAuto("opus");
 
     
   }
@@ -198,19 +194,20 @@ public class RobotContainer {
       m_intake.intakeMotor.setNeutralMode(NeutralModeValue.Coast);
       m_intake.intakeMotor.set(0);
     }));
-    coastMode.whileFalse(Commands.run(() -> {
+    coastMode.onFalse(Commands.run(() -> {
       m_intake.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
     }));
 
-    zeroIntake.onTrue(Commands.run(() -> {
+    zeroIntake.onTrue(Commands.runOnce(() -> {
       m_intake.intakeMotor.setPosition(0);
     }));
    
+    
 
     
 
     intakeUp.whileTrue(Commands.run(()-> {
-      m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(0));
+      m_intake.intakeMotor.setControl(new MotionMagicDutyCycle(Constants.INTAKE_UP));
       m_intake.feederWheelL.set(0);
       m_intake.feederWheelR.set(0);
     }));
@@ -278,7 +275,6 @@ public class RobotContainer {
   }
 
   public void periodic(){
-    
   }
   
 

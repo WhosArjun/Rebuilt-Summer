@@ -25,15 +25,15 @@ public class Intake extends SubsystemBase{
         this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
         this.feederWheelR.setNeutralMode(NeutralModeValue.Coast);
         this.feederWheelL.setNeutralMode(NeutralModeValue.Coast);
-        intakeMotor.setPosition(1,1.0);
+        intakeMotor.setPosition(0);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
         var mm = configs.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 13; //change
-        mm.MotionMagicAcceleration = 7;    
+        mm.MotionMagicCruiseVelocity = 1;  //prev 13
+        mm.MotionMagicAcceleration = 0.5;    // prev 7
         mm.MotionMagicJerk = 0;
         var slot0 = configs.Slot0;
-        slot0.kP = 3;
+        slot0.kP = 1.5;   //change more agression
         slot0.kV = 0.0;
         slot0.kS = 0.0;
 
@@ -43,8 +43,8 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Intake Position Left",intakeMotor.getPosition().getValueAsDouble());
-    
+        //SmartDashboard.putNumber("Intake Position Left",intakeMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("IntakePosition", intakeMotor.getPosition().getValueAsDouble());
 
 
         /* 
