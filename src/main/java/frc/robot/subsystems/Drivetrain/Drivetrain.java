@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Drivetrain;
 
 import java.io.File;
 
@@ -28,22 +28,24 @@ import swervelib.parser.SwerveParser;
 
 public class Drivetrain extends SubsystemBase{
     public SwerveDrive swerveDrive;
-    public final SwerveDrivePoseEstimator visionEstimator;
-    private final Field2d m_field = new Field2d();
+    public final SwerveDrivePoseEstimator visionEstimator; //visionEstimator gets the position, and other variables you get from vision and stores the position through SwerveDrivePoseEstimator
+    private final Field2d m_field = new Field2d(); //Creates a simulation of a 2d field
     
     public Drivetrain() {
+      //TryCatch statement testing the SwerveParson for properties of the robot, flying through the SwerveModule files
         try{swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Constants.MAX_SPEED,new Pose2d());
     } catch (Exception e) {
         e.printStackTrace();
         throw new RuntimeException("67 yanis");
     }
+    //Initialized visionEstimator by creating a new PoseEstimatorObject, using the variables from the swerveDrive class and files that swerveParson gets.
     visionEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics, swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions(), swerveDrive.getPose());    
     configureAuto();
     SmartDashboard.putData("Robot Field Map", m_field);
         
     }
     
-     
+    //Configures the autonomous constants, and also gets the autonomous paths to be configured from the Deploy folder from Pathplanner SIMGUI
     private void configureAuto(){
         RobotConfig config = null;
         try{
@@ -59,15 +61,13 @@ public class Drivetrain extends SubsystemBase{
             this::resetPose,
             this::getRobotRelativeSpeeds,
             this::driveRobotRelative,
-            //(speeds, Feedforwards) -> driveRobotRelative(speeds),
             new PPHolonomicDriveController(
                 new PIDConstants(5.0, 0.0, 0.0),
                 new PIDConstants(5.0, 0.0, 0.0)
             ),
             config,
             () -> {
-               // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
+              // Boolean supplier that controls when the path will be mirrored for the red alliance, this will flip the path being followed to the red side of the field.
               // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
               var alliance = DriverStation.getAlliance();
               if(alliance.isPresent()){
@@ -79,34 +79,7 @@ public class Drivetrain extends SubsystemBase{
         );
     }
         
-/* 
-      private void configureAuto(){
-        RobotConfig config;
-        try{
-          config = RobotConfig.fromGUISettings();
-        }
-        catch(Exception e){
-          e.printStackTrace();
-          throw new RuntimeException("Failed to load Pathplanner robot config", e);
-        }
 
-        AutoBuilder.configure(
-          this::getPose,
-          this::resetPose,
-          this::getRobotRelativeSpeeds,
-          this::driveRobotRelative,
-          new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0),
-            new PIDConstants(5.0, 0.0, 0.0)
-          ),
-          config,
-          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-          this
-        );
-      }
-      */
-
-    
     //pickTarget(), returns a Translation2d, gets the nearest target by using a Vision Pose Estimator
     public Translation2d pickTarget(){
       Pose2d pose = visionEstimator.getEstimatedPosition();
@@ -140,33 +113,7 @@ public class Drivetrain extends SubsystemBase{
       }
     }
 
-
-    /*  public double getHeadingError() {
-        Translation2d target = pickTarget();
-        
-        Pose2d currentPose = visionEstimator.getEstimatedPosition();
-        SmartDashboard.putNumber("currentPose x", currentPose.getX());
-        SmartDashboard.putNumber("currentPose y", currentPose.getY());
-
-        double dx = target.getX() - currentPose.getX();
-        SmartDashboard.putNumber("dx", dx);
-        double dy = target.getY() - currentPose.getY();
-        SmartDashboard.putNumber("dy", dy);
-
-        double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
-        SmartDashboard.putNumber("targetAngle", targetAngle);
-
-        double error = targetAngle - currentPose.getRotation().getDegrees();;
-        error = (error+360)%360; 
-        SmartDashboard.putNumber("error", error);
-        // error = (error + 180) % 360;
-        if (error > 180) error -= 360;
-
-        // error -= 180;
-        // System.out.println(error);
-        return error;
-    }
-        */
+//gets the current robot heading from the hub
 public double getHeadingError() {
     Pose2d robot = visionEstimator.getEstimatedPosition();
     Translation2d target = pickTarget();
@@ -251,10 +198,9 @@ public double getHeadingError() {
         }
     }
 
-
+    //How much do you need the motor to rotate depending on the robot's distance from the hub
     public double distanceToRPM(){
-      double[] function = {33.37143, 9.48571};//0th coeff, 1st, 2nd, etc
-      // double distance = distance();
+      double[] function = {33.37143, 9.48571};
       double distance = distance();
       double sum = 0;
       for(int i = 0;i < function.length; i++){
@@ -266,18 +212,9 @@ public double getHeadingError() {
 
     @Override
     public void periodic(){
-        /*SmartDashboard.putNumber("Angle error", getHeadingError());
-        visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
-        m_field.setRobotPose(visionEstimator.getEstimatedPosition());
-        */
         visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
         SmartDashboard.putNumber("angle error", getHeadingError());
         m_field.setRobotPose(visionEstimator.getEstimatedPosition());
-       // SmartDashboard.putNumber("frontleft", swerveDrive.getModuleMap().get("frontleft").getAbsolutePosition());
-             //   SmartDashboard.putNumber("frontright", swerveDrive.getModuleMap().get("frontright").getAbsolutePosition());
-                //        SmartDashboard.putNumber("backleft", swerveDrive.getModuleMap().get("backleft").getAbsolutePosition());
-                   //             SmartDashboard.putNumber("backright", swerveDrive.getModuleMap().get("backright").getAbsolutePosition());
-
     }
 
     public void zeroGyro(){

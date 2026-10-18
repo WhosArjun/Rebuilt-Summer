@@ -3,37 +3,43 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain.Drivetrain;
 
+
+//Trapezoidal command class for trapezoidal motion, mainly used for linear profiles and linear slides on robot functions.
 public class Trapezoidal extends Command{
+    //Allows the motion to have a drivetrain object
     private final Drivetrain drivetrain;
 
-    private final double distance;
-    private final double max_speed;
-    private final double max_accel;
+    private final double distance;   //Distance required that you want the slide to travel
+    private final double max_speed;  //Max speed you want to set it to
+    private final double max_accel;  //Max acceleration allowed for the slide
 
-    private double peak_speed;
-    private double Ta;
-    private double Tmax;
-    private double totalTime;
+    private double peak_speed;  //Peak speed of the slide at a particular time frame
+    private double Ta;          //Time it takes the robot to accelerate
+    private double Tmax;        //Time at which the slide is at its max speed
+    private double totalTime;   //Total time of the motion
 
-    private double direction;
+    private double direction;   //Direction of the motion
 
-    private long startTime;
+    private long startTime;     //When the motion starts
 
+    //Constructor initilaizing the drvivetrain, max_speed, max_accel, and distance variables.
     public Trapezoidal(Drivetrain drivetrain, double max_speed, double max_accel, double distance){
         this.drivetrain = drivetrain;
         this.max_speed = Math.abs(max_speed);
         this.max_accel = Math.abs(max_accel);
 
-        direction = Math.signum(distance);
-        this.distance = Math.abs(distance);
+        direction = Math.signum(distance);  //Figures out if the value is negative or positive, positive direction (+), negative direction(-). Math.signum(determines the sign of the value)
+        this.distance = Math.abs(distance); //Absolute distance from the desired position
 
-        calculateProfile();
+        calculateProfile(); 
 
         addRequirements(drivetrain);
     }
 
+
+    //Trapezoidal math
     private void calculateProfile(){
         double accelTimeToMax = max_speed/max_accel;
         double accelDistance = 0.5*max_accel*accelTimeToMax*accelTimeToMax;

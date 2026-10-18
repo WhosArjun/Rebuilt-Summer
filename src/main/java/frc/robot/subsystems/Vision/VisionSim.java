@@ -14,15 +14,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain.Drivetrain;
 
 public class VisionSim extends VisionIO{
     public VisionSystemSim visionSim = new VisionSystemSim("main");
     public Drivetrain drivetrain;
-    // public TargetModel targetModel = TargetModel.kAprilTag36h11;
-    // public Pose3d hubTargetPose = new Pose3d(11.901, 4.021, 1.124, new Rotation3d());
-    // public VisionTargetSim visionTarget = new VisionTargetSim(hubTargetPose, targetModel);
-
     SimCameraProperties arducamProp = new SimCameraProperties();
     PhotonCameraSim arducam;
 
@@ -40,11 +36,7 @@ public class VisionSim extends VisionIO{
         arducam = new PhotonCameraSim(real, arducamProp);
 
         Transform3d robotToCamera = new Transform3d(0.2630932, -0.300228, 0.5041392, new Rotation3d(0,Math.toRadians(-9.2),Math.toRadians(-10)));
-
-        visionSim.addCamera(arducam, robotToCamera);
-
-
-        
+        visionSim.addCamera(arducam, robotToCamera);   
     }
     
     @Override

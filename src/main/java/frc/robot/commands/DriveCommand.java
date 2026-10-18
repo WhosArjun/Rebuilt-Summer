@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain.Drivetrain;
 import swervelib.math.SwerveMath;
 
 public class DriveCommand extends Command{
@@ -39,10 +39,10 @@ public class DriveCommand extends Command{
         //Initilaizing the command/start of the skeleton code
     }
 
+
+    //Constantly supplies the joystick (x,y,z) values, and puts them on smartDashboard. Allows the robot to drive fieldOriented by getting the chassisVelocity values and applying a deadzone to the joystick.
     @Override
     public void execute(){ 
-        
-        
         double joystickX = xTranslationSupplier.getAsDouble();
         double joystickY = yTranslationSupplier.getAsDouble();
         double joystickTheta = thetaTranslationSupplier.getAsDouble();
@@ -59,7 +59,7 @@ public class DriveCommand extends Command{
 
     }
 
-    //If the joystick button is on you run the autolock if statement
+    //If the autolock button on the Joystick is on, you run autolock, and you apply the autoshooter button. Calculates the heading of the bot to the hub, and applies the error needed to adjust.
     public double getThetaVelocity(){
         SmartDashboard.putBoolean("buttonOn", autoShooter.get());
         if(autoShooter.get() == true){
@@ -71,9 +71,9 @@ public class DriveCommand extends Command{
         else{
             return deadzone(thetaTranslationSupplier.getAsDouble(),0.05) * Math.abs(drivetrain.swerveDrive.getMaximumChassisAngularVelocity());
         }
-        
     }
     
+    //Deadzone of the joystick for people with butter fingers and minor errors in the joystick.
     public static double deadzone(double number, double deadband){ 
         if (Math.abs(number)<deadband){
             return 0;
@@ -83,38 +83,24 @@ public class DriveCommand extends Command{
     
 
     public void end(boolean interrupted){
-        
+        //End of the command base
     }
+
+    //If the command is finished running
     public boolean isFinished(){
         return false;
     }
 
+    //Doesn't allow the robot to run when disabled
     public boolean runsWhenDisabled(){
         return false;
     }
+
+    //Gets a hashset for the robot command, and continuously adds DriveCOmmand to be called.
     @Override
     public Set<Subsystem> getRequirements(){
         HashSet<Subsystem> requirement = new HashSet<>();
         requirement.add(drivetrain);
         return requirement;
     }
-
-    
-    /*public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY){
-        return run(() -> {
-        Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(), translationY.getAsDouble()),0.8);
-        driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
-        headingX.getAsDouble(), headingY.getAsDouble(), swerveDrive.getOdometryHeading().getRadians(), swerveDrive.getMaximumVelocity()));
-        })
-    }
-
-    public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX){
-        return run(() -> {
-        swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(),
-                                        translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
-                                        angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(), true, false);
-
-        });
-    }
-        */
 }
