@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.io.File;
 
+import com.ctre.phoenix6.swerve.utility.WheelForceCalculator.Feedforwards;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.Intake.Intake;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 
@@ -41,6 +43,7 @@ public class Drivetrain extends SubsystemBase{
         
     }
     
+     
     private void configureAuto(){
         RobotConfig config = null;
         try{
@@ -56,17 +59,55 @@ public class Drivetrain extends SubsystemBase{
             this::resetPose,
             this::getRobotRelativeSpeeds,
             this::driveRobotRelative,
+            //(speeds, Feedforwards) -> driveRobotRelative(speeds),
             new PPHolonomicDriveController(
                 new PIDConstants(5.0, 0.0, 0.0),
                 new PIDConstants(5.0, 0.0, 0.0)
             ),
             config,
-            () -> false,
+            () -> {
+               // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+              var alliance = DriverStation.getAlliance();
+              if(alliance.isPresent()){
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
             this
-
         );
     }
+        
+/* 
+      private void configureAuto(){
+        RobotConfig config;
+        try{
+          config = RobotConfig.fromGUISettings();
+        }
+        catch(Exception e){
+          e.printStackTrace();
+          throw new RuntimeException("Failed to load Pathplanner robot config", e);
+        }
 
+        AutoBuilder.configure(
+          this::getPose,
+          this::resetPose,
+          this::getRobotRelativeSpeeds,
+          this::driveRobotRelative,
+          new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0),
+            new PIDConstants(5.0, 0.0, 0.0)
+          ),
+          config,
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+          this
+        );
+      }
+      */
+
+    
+    //pickTarget(), returns a Translation2d, gets the nearest target by using a Vision Pose Estimator
     public Translation2d pickTarget(){
       Pose2d pose = visionEstimator.getEstimatedPosition();
       if(DriverStation.getAlliance().get()==Alliance.Red){
@@ -144,6 +185,8 @@ public double getHeadingError() {
     SmartDashboard.putNumber("Autolock error", error);
     return error;
 }
+
+    //hubAngle() using a vision Estimator, getting the position and then finding the error from the bot
     public double hubAngle() {
       Pose2d currentPose = visionEstimator.getEstimatedPosition();
       double x = currentPose.getX();
@@ -176,7 +219,10 @@ public double getHeadingError() {
     }
 
     public void driveRobotRelative(ChassisSpeeds speeds){
-        swerveDrive.drive(speeds);
+      SmartDashboard.putNumber("robot relative x", speeds.vxMetersPerSecond);
+      SmartDashboard.putNumber("robot relative y", speeds.vyMetersPerSecond);
+      SmartDashboard.putNumber("robot relative theta", speeds.omegaRadiansPerSecond);
+      swerveDrive.drive(speeds);
     }
 
     public String toString(){
@@ -187,6 +233,8 @@ public double getHeadingError() {
         visionEstimator.update(getGyroRotation(), swerveDrive.getModulePositions());
     }
 
+    
+    //Get distance from the hub using a vision pose estimator
     public double distance(){
     Pose2d currentPose = visionEstimator.getEstimatedPosition();
     double x = currentPose.getX();

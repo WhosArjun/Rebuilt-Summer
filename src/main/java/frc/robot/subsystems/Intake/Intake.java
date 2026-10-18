@@ -13,24 +13,27 @@ import frc.robot.RobotContainer.RobotState;
 
 public class Intake extends SubsystemBase{
     public TalonFX intakeMotor;
-    public TalonFX feederWheel;
+    public TalonFX feederWheelR;
+    public TalonFX feederWheelL;
     public Supplier<RobotState> robotStateSupplier;
 
-    public Intake(int intakeWheelId, int feederWheelID, Supplier<RobotState> robotStateSupplier){
+    public Intake(int intakeWheelId, int feederWheelIDR, int feederWheelIDL, Supplier<RobotState> robotStateSupplier){
         this.intakeMotor = new TalonFX(intakeWheelId);
-        this.feederWheel = new TalonFX(feederWheelID);
+        this.feederWheelR = new TalonFX(feederWheelIDR);
+        this.feederWheelL = new TalonFX(feederWheelIDL);
         this.robotStateSupplier = robotStateSupplier;
         this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
-        this.feederWheel.setNeutralMode(NeutralModeValue.Coast);
-        intakeMotor.setPosition(1,1.0);
+        this.feederWheelR.setNeutralMode(NeutralModeValue.Coast);
+        this.feederWheelL.setNeutralMode(NeutralModeValue.Coast);
+        intakeMotor.setPosition(0);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
         var mm = configs.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 13;
-        mm.MotionMagicAcceleration = 7;
+        mm.MotionMagicCruiseVelocity = 1;  //prev 13
+        mm.MotionMagicAcceleration = 0.5;    // prev 7
         mm.MotionMagicJerk = 0;
         var slot0 = configs.Slot0;
-        slot0.kP = 3;
+        slot0.kP = 1.5;   //change more agression
         slot0.kV = 0.0;
         slot0.kS = 0.0;
 
@@ -40,7 +43,9 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Intake Position",intakeMotor.getPosition().getValueAsDouble());
+        //SmartDashboard.putNumber("Intake Position Left",intakeMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("IntakePosition", intakeMotor.getPosition().getValueAsDouble());
+
 
         /* 
         RobotState state = robotStateSupplier.get();
