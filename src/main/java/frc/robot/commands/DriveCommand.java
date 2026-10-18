@@ -16,31 +16,27 @@ import frc.robot.subsystems.Drivetrain;
 import swervelib.math.SwerveMath;
 
 public class DriveCommand extends Command{
-    private Supplier<Boolean> autoShooter;
+    private Supplier<Boolean> autoShooter; //autoChooser allows you to choose what autonomous you would like to run in elastic
     private Drivetrain drivetrain;
-    private DoubleSupplier xTranslationSupplier;
-    private DoubleSupplier yTranslationSupplier;
-    private DoubleSupplier thetaTranslationSupplier;
-    private PIDController pidController;
+    private DoubleSupplier xTranslationSupplier; //constant supplier of the y position of the robot
+    private DoubleSupplier yTranslationSupplier; //constant supplier of the x position of the robot
+    private DoubleSupplier thetaTranslationSupplier;  //constant supplier of the theta (heading) of the robot
+    private PIDController pidController; //PID values tuned controller
 
-   
-    private PIDController thetaController;
-    public DriveCommand(Drivetrain drivetrain, DoubleSupplier xTranslationSupplier,
-                        DoubleSupplier yTranslationSupplier, DoubleSupplier thetaTranslationSupplier,
-                        Supplier<Boolean> autoShooter){
+
+    //Constructuer initializing all the instance variable of DriveCommand
+    public DriveCommand(Drivetrain drivetrain, DoubleSupplier xTranslationSupplier, DoubleSupplier yTranslationSupplier, DoubleSupplier thetaTranslationSupplier, Supplier<Boolean> autoShooter){
                             this.drivetrain = drivetrain;
                             this.xTranslationSupplier = xTranslationSupplier;
                             this.yTranslationSupplier = yTranslationSupplier;
                             this.thetaTranslationSupplier = thetaTranslationSupplier;
                             this.autoShooter = autoShooter;
-                            //pidController = new PIDController(5, 0, 0);
-                            pidController = new PIDController(0.075, 0, 0);
+                            pidController = new PIDController(0.075, 0, 0); //Initializing PID values with kP, kI, kD, proportional, integral, derivative
 
     }
-
     @Override
     public void initialize(){
-
+        //Initilaizing the command/start of the skeleton code
     }
 
     @Override
